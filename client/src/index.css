@@ -1,8 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap");
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   :root {
@@ -42,8 +40,6 @@
     --ring: 220 90% 56%;
   }
 
-
-
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
@@ -51,12 +47,7 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     font-family: "Playfair Display", serif;
     font-weight: 700;
     letter-spacing: -0.02em;
@@ -68,14 +59,10 @@
     letter-spacing: -0.02em;
   }
   @media (min-width: 768px) {
-    h1 {
-      font-size: 3rem;
-    }
+    h1 { font-size: 3rem; }
   }
   @media (min-width: 1024px) {
-    h1 {
-      font-size: 3.75rem;
-    }
+    h1 { font-size: 3.75rem; }
   }
 
   h2 {
@@ -84,9 +71,7 @@
     letter-spacing: -0.02em;
   }
   @media (min-width: 768px) {
-    h2 {
-      font-size: 2.25rem;
-    }
+    h2 { font-size: 2.25rem; }
   }
 
   h3 {
@@ -94,9 +79,7 @@
     font-weight: 700;
   }
   @media (min-width: 768px) {
-    h3 {
-      font-size: 1.875rem;
-    }
+    h3 { font-size: 1.875rem; }
   }
 
   h4 {
@@ -104,20 +87,11 @@
     font-weight: 600;
   }
   @media (min-width: 768px) {
-    h4 {
-      font-size: 1.5rem;
-    }
+    h4 { font-size: 1.5rem; }
   }
 
-  h5 {
-    font-size: 1.125rem;
-    font-weight: 600;
-  }
-
-  h6 {
-    font-size: 1rem;
-    font-weight: 600;
-  }
+  h5 { font-size: 1.125rem; font-weight: 600; }
+  h6 { font-size: 1rem; font-weight: 600; }
 
   p {
     font-size: 1rem;
@@ -133,44 +107,28 @@
     padding-right: 1rem;
   }
   @media (min-width: 640px) {
-    .container {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
+    .container { padding-left: 1.5rem; padding-right: 1.5rem; }
   }
   @media (min-width: 1024px) {
-    .container {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
-  }
-
-  .flex {
-    display: flex;
-    min-height: 0;
-    min-width: 0;
+    .container { padding-left: 2rem; padding-right: 2rem; }
   }
 
   button {
     transition: all 0.2s;
   }
-
   button:active {
     transform: scale(0.97);
   }
 
   .shadow-elegant {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06);
   }
-
   .shadow-elegant-lg {
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 0 1px rgba(0,0,0,0.1);
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    * {
-      transition: color 0.2s, background-color 0.2s, border-color 0.2s;
-    }
+    * { transition: color 0.2s, background-color 0.2s, border-color 0.2s; }
   }
 }
 
@@ -186,12 +144,8 @@
     border-radius: 0.5rem;
     transition: all 0.2s;
   }
-  .btn-primary:hover {
-    opacity: 0.9;
-  }
-  .btn-primary:active {
-    transform: scale(0.95);
-  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:active { transform: scale(0.95); }
 
   .btn-secondary {
     display: inline-flex;
@@ -204,12 +158,8 @@
     border-radius: 0.5rem;
     transition: all 0.2s;
   }
-  .btn-secondary:hover {
-    background-color: hsl(var(--muted) / 0.8);
-  }
-  .btn-secondary:active {
-    transform: scale(0.95);
-  }
+  .btn-secondary:hover { background-color: hsl(var(--muted) / 0.8); }
+  .btn-secondary:active { transform: scale(0.95); }
 
   .btn-outline {
     display: inline-flex;
@@ -222,29 +172,23 @@
     border-radius: 0.5rem;
     transition: all 0.2s;
   }
-  .btn-outline:hover {
-    background-color: hsl(var(--muted) / 0.5);
-  }
-  .btn-outline:active {
-    transform: scale(0.95);
-  }
+  .btn-outline:hover { background-color: hsl(var(--muted) / 0.5); }
+  .btn-outline:active { transform: scale(0.95); }
 
   .card-elegant {
     background-color: hsl(var(--card));
     color: hsl(var(--card-foreground));
     border-radius: 0.5rem;
     border: 1px solid hsl(var(--border));
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06);
     padding: 1.5rem;
     transition: box-shadow 0.3s;
   }
   .card-elegant:hover {
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 0 1px rgba(0,0,0,0.1);
   }
 
-  .text-muted {
-    color: hsl(var(--muted-foreground));
-  }
+  .text-muted { color: hsl(var(--muted-foreground)); }
 
   .input-elegant {
     width: 100%;
@@ -255,14 +199,8 @@
     color: hsl(var(--foreground));
     transition: all 0.2s;
   }
-  .input-elegant::placeholder {
-    color: hsl(var(--muted-foreground));
-  }
-  .input-elegant:focus {
-    outline: none;
-    ring: 2px;
-    ring-color: hsl(var(--accent) / 0.5);
-  }
+  .input-elegant::placeholder { color: hsl(var(--muted-foreground)); }
+  .input-elegant:focus { outline: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
