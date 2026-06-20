@@ -1,63 +1,57 @@
-import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { supabase } from "@/supabase";
 import { useLocation } from "wouter";
-import { LayoutDashboard, LogOut, User, Wrench } from "lucide-react";
+import { LayoutDashboard, LogOut, Wrench } from "lucide-react";
 
 export default function Navbar() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const [user, setUser] = useState<any>(null);
   const [, setLocation] = useLocation();
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setLocation("/");
+  };
+
   return (
-    <nav className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border shadow-sm">
-      <div className="container flex items-center justify-between py-4">
-        <button onClick={() => setLocation("/")} className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-accent to-accent/80 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">Z</span>
-          </div>
-          <span className="text-xl font-bold text-foreground">ZimService</span>
+    <nav style={{ position: "sticky", top: 0, zIndex: 50, background: "rgba(255,255,255,0.95)", backdropFilter: "blur(8px)", borderBottom: "1px solid #E2E8F0", padding: "0 24px" }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: "64px" }}>
+        
+        <button onClick={() => setLocation("/")} style={{ display: "flex", alignItems: "center", gap: "8px", background: "none", border: "none", cursor: "pointer" }}>
+          <div style={{ width: "32px", height: "32px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: "16px" }}>Z</div>
+          <span style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A" }}>ZimService</span>
         </button>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setLocation("/services")}
-            className="text-sm text-foreground hover:text-accent transition-colors px-3 py-2"
-          >
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <button onClick={() => setLocation("/services")} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "14px", color: "#64748B", padding: "8px 12px", borderRadius: "8px" }}>
             Browse Services
           </button>
 
-          {isAuthenticated ? (
+          {user ? (
             <>
-              <button
-                onClick={() => setLocation("/dashboard")}
-                className="flex items-center gap-1 text-sm text-foreground hover:text-accent transition-colors px-3 py-2"
-              >
-                <LayoutDashboard className="w-4 h-4" />
-                <span className="hidden sm:inline">Dashboard</span>
+              <button onClick={() => setLocation("/dashboard")} style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", cursor: "pointer", fontSize: "14px", color: "#64748B", padding: "8px 12px", borderRadius: "8px" }}>
+                <LayoutDashboard size={16} /> Dashboard
               </button>
-              {!user?.isProvider && (
-                <button
-                  onClick={() => setLocation("/provider/onboarding")}
-                  className="flex items-center gap-1 text-sm text-foreground hover:text-accent transition-colors px-3 py-2"
-                >
-                  <Wrench className="w-4 h-4" />
-                  <span className="hidden sm:inline">Become Provider</span>
-                </button>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={logout}
-                className="flex items-center gap-1"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">Sign Out</span>
-              </Button>
+              <button onClick={() => setLocation("/provider/onboarding")} style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", cursor: "pointer", fontSize: "14px", color: "#64748B", padding: "8px 12px", borderRadius: "8px" }}>
+                <Wrench size={16} /> Become Provider
+              </button>
+              <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: "6px", background: "#FEF2F2", color: "#EF4444", border: "1px solid #FECACA", padding: "8px 14px", borderRadius: "8px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>
+                <LogOut size={16} /> Sign Out
+              </button>
             </>
           ) : (
-            <Button size="sm" asChild className="btn-primary">
-              <a href={getLoginUrl()}>Sign In</a>
-            </Button>
+            <button onClick={() => setLocation("/auth")} style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "10px 20px", borderRadius: "8px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>
+              Sign In
+            </button>
           )}
         </div>
       </div>
