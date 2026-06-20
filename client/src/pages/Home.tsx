@@ -1,301 +1,169 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Briefcase, Home as HomeIcon, Heart, Wrench, Star } from "lucide-react";
+import { ArrowRight, Briefcase, Home as HomeIcon, Heart, Wrench, Star, CheckCircle, Shield, Clock } from "lucide-react";
 import { useLocation } from "wouter";
 import { getLoginUrl } from "@/const";
 import Navbar from "@/components/Navbar";
 
-const SERVICE_CATEGORIES = [
-  {
-    id: "household-chores",
-    name: "Household Chores",
-    description: "Cleaning, laundry, organizing, and more",
-    icon: HomeIcon,
-    color: "from-blue-500 to-blue-600",
-  },
-  {
-    id: "repairs",
-    name: "Repairs",
-    description: "Plumbing, electrical, appliance repairs",
-    icon: Wrench,
-    color: "from-orange-500 to-orange-600",
-  },
-  {
-    id: "personal-care",
-    name: "Personal Care",
-    description: "Grooming, fitness, wellness services",
-    icon: Heart,
-    color: "from-pink-500 to-pink-600",
-  },
-  {
-    id: "skilled-trades",
-    name: "Skilled Trades",
-    description: "Carpentry, painting, construction work",
-    icon: Briefcase,
-    color: "from-amber-500 to-amber-600",
-  },
+const CATEGORIES = [
+  { name: "Household Chores", desc: "Cleaning, laundry, organizing", icon: HomeIcon, bg: "#3B82F6", light: "#EFF6FF" },
+  { name: "Repairs", desc: "Plumbing, electrical, appliances", icon: Wrench, bg: "#F97316", light: "#FFF7ED" },
+  { name: "Personal Care", desc: "Grooming, fitness, wellness", icon: Heart, bg: "#EC4899", light: "#FDF2F8" },
+  { name: "Skilled Trades", desc: "Carpentry, painting, building", icon: Briefcase, bg: "#F59E0B", light: "#FFFBEB" },
 ];
 
 export default function Home() {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
-  const navigate = (path: string) => setLocation(path);
-
-  const handleBrowseServices = () => {
-    navigate("/services");
-  };
-
-  const handleBecomeProvider = () => {
-    if (isAuthenticated) {
-      navigate("/provider/onboarding");
-    } else {
-      window.location.href = getLoginUrl();
-    }
-  };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#fff" }}>
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-32 bg-gradient-to-br from-background via-background to-accent/5">
-        <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <h1 className="text-5xl md:text-6xl font-bold text-foreground leading-tight">
-                  Trusted Local Services,{" "}
-                  <span className="bg-gradient-to-r from-accent to-accent/80 bg-clip-text text-transparent">
-                    On Demand
-                  </span>
-                </h1>
-                <p className="text-xl text-muted-foreground leading-relaxed">
-                  Connect with vetted service providers in your community. From household chores to skilled trades, find the help you need with confidence.
-                </p>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  onClick={handleBrowseServices}
-                  className="btn-primary gap-2"
-                >
-                  Browse Services <ArrowRight className="w-4 h-4" />
-                </Button>
-                <Button
-                  onClick={handleBecomeProvider}
-                  className="btn-outline"
-                >
-                  Become a Provider
-                </Button>
-              </div>
-
-              {/* Trust indicators */}
-              <div className="flex flex-col sm:flex-row gap-8 pt-8 border-t border-border">
-                <div>
-                  <p className="text-2xl font-bold text-foreground">500+</p>
-                  <p className="text-muted-foreground">Verified Providers</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-foreground">2,000+</p>
-                  <p className="text-muted-foreground">Happy Customers</p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="flex gap-0.5">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-4 h-4 fill-accent text-accent"
-                      />
-                    ))}
-                  </div>
-                  <p className="text-muted-foreground">4.8 Average Rating</p>
-                </div>
-              </div>
+      {/* Hero */}
+      <section style={{ background: "linear-gradient(135deg, #f0f7ff 0%, #ffffff 50%, #f5f0ff 100%)", padding: "80px 0" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "48px", alignItems: "center" }}>
+          <div>
+            <div style={{ display: "inline-block", background: "#EEF2FF", color: "#4F46E5", padding: "6px 16px", borderRadius: "999px", fontSize: "14px", fontWeight: 600, marginBottom: "20px" }}>
+              🇿🇼 Zimbabwe's #1 Service Marketplace
             </div>
-
-            {/* Hero Image Placeholder */}
-            <div className="relative h-96 md:h-full min-h-96 bg-gradient-to-br from-accent/10 to-accent/5 rounded-2xl border border-border flex items-center justify-center overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-accent/10" />
-              <div className="text-center space-y-4 relative z-10">
-                <div className="w-24 h-24 mx-auto bg-accent/20 rounded-full flex items-center justify-center">
-                  <Briefcase className="w-12 h-12 text-accent" />
+            <h1 style={{ fontSize: "56px", fontWeight: 800, lineHeight: 1.1, color: "#0F172A", marginBottom: "20px", fontFamily: "Playfair Display, serif" }}>
+              Trusted Local Services,{" "}
+              <span style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                On Demand
+              </span>
+            </h1>
+            <p style={{ fontSize: "18px", color: "#64748B", lineHeight: 1.7, marginBottom: "32px" }}>
+              Connect with vetted service providers in your community. From household chores to skilled trades — find the help you need with confidence.
+            </p>
+            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginBottom: "40px" }}>
+              <button
+                onClick={() => setLocation("/services")}
+                style={{ display: "flex", alignItems: "center", gap: "8px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 600, cursor: "pointer" }}
+              >
+                Browse Services <ArrowRight size={18} />
+              </button>
+              <button
+                onClick={() => isAuthenticated ? setLocation("/provider/onboarding") : (window.location.href = getLoginUrl())}
+                style={{ display: "flex", alignItems: "center", gap: "8px", background: "#fff", color: "#3B82F6", border: "2px solid #3B82F6", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 600, cursor: "pointer" }}
+              >
+                Become a Provider
+              </button>
+            </div>
+            <div style={{ display: "flex", gap: "32px", flexWrap: "wrap" }}>
+              {[["500+", "Verified Providers"], ["2,000+", "Happy Customers"], ["4.8★", "Average Rating"]].map(([val, label]) => (
+                <div key={label}>
+                  <div style={{ fontSize: "24px", fontWeight: 800, color: "#0F172A" }}>{val}</div>
+                  <div style={{ fontSize: "14px", color: "#64748B" }}>{label}</div>
                 </div>
-                <p className="text-muted-foreground">Professional Services</p>
-              </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Service Categories Section */}
-      <section className="py-20 md:py-32 bg-card border-t border-border">
-        <div className="container">
-          <div className="text-center space-y-4 mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground">
-              Featured Service Categories
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Explore our four main service categories and find the perfect provider for your needs
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {SERVICE_CATEGORIES.map((category) => {
-              const Icon = category.icon;
-              return (
-                <button
-                  key={category.id}
-                  onClick={handleBrowseServices}
-                  className="card-elegant group hover:shadow-elegant-lg cursor-pointer"
-                >
-                  <div
-                    className={`w-12 h-12 rounded-lg bg-gradient-to-br ${category.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
-                  >
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2 text-left">
-                    {category.name}
-                  </h3>
-                  <p className="text-sm text-muted-foreground text-left">
-                    {category.description}
-                  </p>
-                  <div className="mt-4 flex items-center gap-2 text-accent opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-sm font-medium">Explore</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section className="py-20 md:py-32 bg-background">
-        <div className="container">
-          <div className="text-center space-y-4 mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground">
-              How It Works
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Simple, transparent, and secure service booking in three easy steps
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div style={{ background: "linear-gradient(135deg, #EEF2FF, #F0F9FF)", borderRadius: "24px", padding: "48px", display: "flex", flexDirection: "column", gap: "16px" }}>
             {[
-              {
-                step: "1",
-                title: "Find & Browse",
-                description:
-                  "Search for services by category, location, and price. Read reviews and check provider ratings.",
-              },
-              {
-                step: "2",
-                title: "Book & Schedule",
-                description:
-                  "Select your preferred provider and book a time that works for you. Confirm details instantly.",
-              },
-              {
-                step: "3",
-                title: "Pay & Review",
-                description:
-                  "Pay securely through Paynow. Rate and review your provider after the service is complete.",
-              },
-            ].map((item, index) => (
-              <div key={index} className="card-elegant text-center">
-                <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-2xl font-bold text-accent">{item.step}</span>
-                </div>
-                <h3 className="text-xl font-semibold text-foreground mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-muted-foreground">{item.description}</p>
+              { icon: CheckCircle, text: "Verified & background-checked providers", color: "#10B981" },
+              { icon: Shield, text: "Secure Paynow payment processing", color: "#3B82F6" },
+              { icon: Clock, text: "Book anytime, service on your schedule", color: "#F59E0B" },
+              { icon: Star, text: "Rated & reviewed by real customers", color: "#EC4899" },
+            ].map(({ icon: Icon, text, color }) => (
+              <div key={text} style={{ display: "flex", alignItems: "center", gap: "12px", background: "#fff", padding: "16px", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+                <Icon size={20} color={color} />
+                <span style={{ fontSize: "15px", color: "#334155", fontWeight: 500 }}>{text}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 md:py-32 bg-gradient-to-r from-accent/10 to-accent/5 border-t border-border">
-        <div className="container">
-          <div className="max-w-2xl mx-auto text-center space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground">
-                Ready to Get Started?
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                Whether you're looking for a service or want to offer your skills, join ZimService today.
-              </p>
-            </div>
+      {/* Categories */}
+      <section style={{ background: "#F8FAFC", padding: "80px 0" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ textAlign: "center", marginBottom: "48px" }}>
+            <h2 style={{ fontSize: "40px", fontWeight: 800, color: "#0F172A", marginBottom: "12px", fontFamily: "Playfair Display, serif" }}>Featured Service Categories</h2>
+            <p style={{ fontSize: "18px", color: "#64748B" }}>Find the perfect provider for any need</p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "24px" }}>
+            {CATEGORIES.map(({ name, desc, icon: Icon, bg, light }) => (
+              <button
+                key={name}
+                onClick={() => setLocation("/services")}
+                style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: "16px", padding: "28px", textAlign: "left", cursor: "pointer", transition: "all 0.2s", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}
+                onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-4px)", e.currentTarget.style.boxShadow = "0 12px 32px rgba(0,0,0,0.1)")}
+                onMouseLeave={e => (e.currentTarget.style.transform = "translateY(0)", e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.04)")}
+              >
+                <div style={{ width: "52px", height: "52px", background: bg, borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "16px" }}>
+                  <Icon size={26} color="#fff" />
+                </div>
+                <div style={{ fontSize: "17px", fontWeight: 700, color: "#0F172A", marginBottom: "6px" }}>{name}</div>
+                <div style={{ fontSize: "14px", color: "#64748B" }}>{desc}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                onClick={handleBrowseServices}
-                className="btn-primary gap-2"
-              >
-                Find Services <ArrowRight className="w-4 h-4" />
-              </Button>
-              <Button
-                onClick={handleBecomeProvider}
-                className="btn-secondary"
-              >
-                Start Earning Today
-              </Button>
-            </div>
+      {/* How it works */}
+      <section style={{ background: "#fff", padding: "80px 0" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ textAlign: "center", marginBottom: "48px" }}>
+            <h2 style={{ fontSize: "40px", fontWeight: 800, color: "#0F172A", marginBottom: "12px", fontFamily: "Playfair Display, serif" }}>How It Works</h2>
+            <p style={{ fontSize: "18px", color: "#64748B" }}>Book a service in 3 simple steps</p>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "32px" }}>
+            {[
+              { step: "1", title: "Find & Browse", desc: "Search by category, location, and price. Read reviews and ratings.", color: "#3B82F6" },
+              { step: "2", title: "Book & Schedule", desc: "Pick your provider and choose a time that works for you.", color: "#6366F1" },
+              { step: "3", title: "Pay & Review", desc: "Pay securely via Paynow and leave a review after the job.", color: "#8B5CF6" },
+            ].map(({ step, title, desc, color }) => (
+              <div key={step} style={{ textAlign: "center", padding: "32px", background: "#F8FAFC", borderRadius: "16px" }}>
+                <div style={{ width: "64px", height: "64px", background: color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", fontSize: "24px", fontWeight: 800, color: "#fff" }}>{step}</div>
+                <div style={{ fontSize: "20px", fontWeight: 700, color: "#0F172A", marginBottom: "8px" }}>{title}</div>
+                <div style={{ fontSize: "15px", color: "#64748B", lineHeight: 1.6 }}>{desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", padding: "80px 0" }}>
+        <div style={{ maxWidth: "600px", margin: "0 auto", padding: "0 24px", textAlign: "center" }}>
+          <h2 style={{ fontSize: "40px", fontWeight: 800, color: "#fff", marginBottom: "16px", fontFamily: "Playfair Display, serif" }}>Ready to Get Started?</h2>
+          <p style={{ fontSize: "18px", color: "rgba(255,255,255,0.85)", marginBottom: "32px" }}>Join thousands of Zimbabweans using ZimService every day.</p>
+          <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
+            <button onClick={() => setLocation("/services")} style={{ background: "#fff", color: "#3B82F6", border: "none", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 700, cursor: "pointer" }}>
+              Find Services
+            </button>
+            <button onClick={() => isAuthenticated ? setLocation("/provider/onboarding") : (window.location.href = getLoginUrl())} style={{ background: "rgba(255,255,255,0.15)", color: "#fff", border: "2px solid rgba(255,255,255,0.5)", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 700, cursor: "pointer" }}>
+              Start Earning
+            </button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-card border-t border-border py-12">
-        <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">About</h4>
-              <ul className="space-y-2 text-muted-foreground text-sm">
-                <li><a href="#" className="hover:text-accent transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Careers</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">Support</h4>
-              <ul className="space-y-2 text-muted-foreground text-sm">
-                <li><a href="#" className="hover:text-accent transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Contact Us</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">FAQ</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">Legal</h4>
-              <ul className="space-y-2 text-muted-foreground text-sm">
-                <li><a href="#" className="hover:text-accent transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Cookie Policy</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-foreground mb-4">Connect</h4>
-              <ul className="space-y-2 text-muted-foreground text-sm">
-                <li><a href="#" className="hover:text-accent transition-colors">Twitter</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Facebook</a></li>
-                <li><a href="#" className="hover:text-accent transition-colors">Instagram</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <div className="w-6 h-6 bg-gradient-to-br from-accent to-accent/80 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">Z</span>
+      <footer style={{ background: "#0F172A", padding: "48px 0 24px" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "32px", marginBottom: "40px" }}>
+            {[
+              { title: "About", links: ["About Us", "Blog", "Careers"] },
+              { title: "Support", links: ["Help Center", "Contact Us", "FAQ"] },
+              { title: "Legal", links: ["Privacy Policy", "Terms of Service", "Cookie Policy"] },
+              { title: "Connect", links: ["Twitter", "Facebook", "Instagram"] },
+            ].map(({ title, links }) => (
+              <div key={title}>
+                <div style={{ fontSize: "14px", fontWeight: 700, color: "#fff", marginBottom: "16px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{title}</div>
+                {links.map(link => (
+                  <a key={link} href="#" style={{ display: "block", fontSize: "14px", color: "#94A3B8", marginBottom: "8px", textDecoration: "none" }}>{link}</a>
+                ))}
               </div>
-              <span className="font-semibold text-foreground">ZimService</span>
+            ))}
+          </div>
+          <div style={{ borderTop: "1px solid #1E293B", paddingTop: "24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div style={{ width: "28px", height: "28px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: "14px" }}>Z</div>
+              <span style={{ color: "#fff", fontWeight: 700, fontSize: "16px" }}>ZimService</span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              © 2026 ZimService. All rights reserved.
-            </p>
+            <span style={{ fontSize: "14px", color: "#64748B" }}>© 2026 ZimService. All rights reserved.</span>
           </div>
         </div>
       </footer>
