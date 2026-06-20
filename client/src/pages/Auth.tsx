@@ -1,25 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/supabase";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { Briefcase } from "lucide-react";
 
-type Mode = "signin" | "signup" | "forgot";
+type Mode = "signin" | "signup" | "forgot" | "reset";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [mode, setMode] = useState<Mode>("signin");
   const [loading, setLoading] = useState(false);
   const [, setLocation] = useLocation();
 
+  useEffect(() => {
+    // Check if this is a password reset redirect
+    const hashParams = new URLSearchParams(window.location.hash.replace("#", "?"));
+    const type = hashParams.get("type");
+    if (type === "recovery") {
+      setMode("reset");
+    }
+  }, []);
+
   const handleSubmit = async () => {
-    if (!email) { toast.error("Please enter your email"); return; }
-    if (mode !== "forgot" && !password) { toast.error("Please enter your password"); return; }
     setLoading(true);
     try {
       if (mode === "signup") {
+        if (!email || !password) { toast.error("Please fill in all fields"); return; }
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -27,17 +36,30 @@ export default function Auth() {
         });
         if (error) throw error;
         toast.success("Account created! Check your email to confirm.");
+
       } else if (mode === "signin") {
+        if (!email || !password) { toast.error("Please fill in all fields"); return; }
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Signed in successfully!");
         setLocation("/dashboard");
+
       } else if (mode === "forgot") {
+        if (!email) { toast.error("Please enter your email"); return; }
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/auth`,
         });
         if (error) throw error;
         toast.success("Password reset email sent! Check your inbox.");
+        setMode("signin");
+
+      } else if (mode === "reset") {
+        if (!password || !confirmPassword) { toast.error("Please fill in all fields"); return; }
+        if (password !== confirmPassword) { toast.error("Passwords do not match"); return; }
+        if (password.length < 6) { toast.error("Password must be at least 6 characters"); return; }
+        const { error } = await supabase.auth.updateUser({ password });
+        if (error) throw error;
+        toast.success("Password updated successfully! Please sign in.");
         setMode("signin");
       }
     } catch (e: any) {
@@ -51,12 +73,14 @@ export default function Auth() {
     signin: "Welcome back",
     signup: "Create your account",
     forgot: "Reset your password",
+    reset: "Set new password",
   };
 
   const buttonLabels = {
     signin: "Sign In",
     signup: "Create Account",
     forgot: "Send Reset Email",
+    reset: "Update Password",
   };
 
   return (
@@ -74,6 +98,7 @@ export default function Auth() {
 
         {/* Form */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+
           {mode === "signup" && (
             <div>
               <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "6px" }}>Full Name</label>
@@ -86,25 +111,26 @@ export default function Auth() {
               />
             </div>
           )}
-          <div>
-            <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "6px" }}>Email</label>
-            <input
-              type="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{ width: "100%", padding: "12px 16px", border: "2px solid #E2E8F0", borderRadius: "10px", fontSize: "15px", outline: "none", boxSizing: "border-box" }}
-            />
-          </div>
-          {mode !== "forgot" && (
+
+          {(mode === "signin" || mode === "signup" || mode === "forgot") && (
+            <div>
+              <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "6px" }}>Email</label>
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={{ width: "100%", padding: "12px 16px", border: "2px solid #E2E8F0", borderRadius: "10px", fontSize: "15px", outline: "none", boxSizing: "border-box" }}
+              />
+            </div>
+          )}
+
+          {(mode === "signin" || mode === "signup") && (
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
                 <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>Password</label>
                 {mode === "signin" && (
-                  <button
-                    onClick={() => setMode("forgot")}
-                    style={{ fontSize: "13px", color: "#3B82F6", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}
-                  >
+                  <button onClick={() => setMode("forgot")} style={{ fontSize: "13px", color: "#3B82F6", background: "none", border: "none", cursor: "pointer", fontWeight: 500 }}>
                     Forgot password?
                   </button>
                 )}
@@ -120,6 +146,32 @@ export default function Auth() {
             </div>
           )}
 
+          {mode === "reset" && (
+            <>
+              <div>
+                <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "6px" }}>New Password</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={{ width: "100%", padding: "12px 16px", border: "2px solid #E2E8F0", borderRadius: "10px", fontSize: "15px", outline: "none", boxSizing: "border-box" }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "6px" }}>Confirm New Password</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+                  style={{ width: "100%", padding: "12px 16px", border: "2px solid #E2E8F0", borderRadius: "10px", fontSize: "15px", outline: "none", boxSizing: "border-box" }}
+                />
+              </div>
+            </>
+          )}
+
           <button
             onClick={handleSubmit}
             disabled={loading}
@@ -130,7 +182,7 @@ export default function Auth() {
         </div>
 
         <div style={{ textAlign: "center", marginTop: "24px" }}>
-          {mode === "forgot" ? (
+          {mode === "forgot" || mode === "reset" ? (
             <button onClick={() => setMode("signin")} style={{ fontSize: "14px", color: "#3B82F6", fontWeight: 600, background: "none", border: "none", cursor: "pointer" }}>
               ← Back to Sign In
             </button>
