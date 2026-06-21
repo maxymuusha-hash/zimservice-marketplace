@@ -10,12 +10,14 @@ import ProviderProfile from "./pages/ProviderProfile";
 import ProviderOnboarding from "./pages/ProviderOnboarding";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/auth" component={Auth} />
+      <Route path="/reset-password" component={ResetPassword} />
       <Route path="/services" component={ServicesPage} />
       <Route path="/provider/onboarding" component={ProviderOnboarding} />
       <Route path="/provider/:id" component={ProviderProfile} />
