@@ -50,7 +50,7 @@ export const appRouter = router({
         z.object({
           category: z.string().optional(),
           search: z.string().optional(),
-        }).optional().default({})
+        }).nullish().transform(val => val ?? {})
       )
       .query(async ({ input }) => {
         const db = await getDb();
@@ -73,18 +73,15 @@ export const appRouter = router({
           .where(and(eq(users.id, input.id), eq(users.isProvider, true)))
           .limit(1);
         if (!provider) return null;
-
         const providerServices = await db
           .select()
           .from(services)
           .where(eq(services.providerId, input.id));
-
         const providerReviews = await db
           .select()
           .from(reviews)
           .where(eq(reviews.providerId, input.id))
           .orderBy(desc(reviews.createdAt));
-
         return { ...provider, services: providerServices, reviews: providerReviews };
       }),
   }),
@@ -99,7 +96,7 @@ export const appRouter = router({
           search: z.string().optional(),
           minPrice: z.number().optional(),
           maxPrice: z.number().optional(),
-        }).optional().default({})
+        }).nullish().transform(val => val ?? {})
       )
       .query(async ({ input }) => {
         const db = await getDb();
