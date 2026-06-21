@@ -1,6 +1,8 @@
 import type { Request } from "express";
 import { createClient } from "@supabase/supabase-js";
-import * as db from "../db";
+import { getDb } from "../db";
+import { users } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
 import type { User } from "../../drizzle/schema";
 
 const supabase = createClient(
@@ -16,18 +18,12 @@ export type AuthenticatedUser = User & {
 export const sdk = {
   async authenticateRequest(req: Request): Promise<AuthenticatedUser> {
     const authHeader = req.headers.authorization;
-    console.log("[Auth] Authorization header:", authHeader ? "present" : "missing");
-
     if (!authHeader?.startsWith("Bearer ")) {
-      console.log("[Auth] No Bearer token found");
-      throw new Error("Missing or invalid Authorization header");
+      throw new Error("Missing Authorization header");
     }
 
     const token = authHeader.replace("Bearer ", "");
-    console.log("[Auth] Token length:", token.length);
-
     const { data, error } = await supabase.auth.getUser(token);
-    console.log("[Auth] Supabase getUser result:", error ? `error: ${error.message}` : `user: ${data.user?.id}`);
 
     if (error || !data.user) {
       throw new Error("Invalid Supabase token");
@@ -36,21 +32,25 @@ export const sdk = {
     const supabaseUser = data.user;
     const openId = supabaseUser.id;
 
-    let user = await db.getUserByOpenId(openId);
-    console.log("[Auth] DB user found:", !!user);
+    const db = await getDb();
+    if (!db) throw new Error("Database unavailable");
+
+    let [user] = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
 
     if (!user) {
-      await db.upsertUser({
+      await db.insert(users).values({
         openId,
         name: supabaseUser.user_metadata?.full_name ?? supabaseUser.email ?? null,
         email: supabaseUser.email ?? null,
         loginMethod: "email",
         lastSignedIn: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
-      user = await db.getUserByOpenId(openId);
+      [user] = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
     }
 
-    if (!user) throw new Error("User not found after upsert");
+    if (!user) throw new Error("User not found after insert");
 
     return user as AuthenticatedUser;
   },
