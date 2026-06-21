@@ -30,11 +30,17 @@ async function startServer() {
   const server = createServer(app);
 
   app.use(cors({
-    origin: [
-      "https://zimservice-marketplace.vercel.app",
-      "http://localhost:3000",
-      "http://localhost:5173",
-    ],
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (
+        origin.endsWith(".vercel.app") ||
+        origin === "http://localhost:3000" ||
+        origin === "http://localhost:5173"
+      ) {
+        return callback(null, true);
+      }
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }));
 
