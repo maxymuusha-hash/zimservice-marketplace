@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/supabase";
+import { supabase } from "@/lib/supabase";
 
 export function useAuth(options?: { redirectOnUnauthenticated?: boolean }) {
   const [user, setUser] = useState<any>(null);
@@ -10,12 +10,10 @@ export function useAuth(options?: { redirectOnUnauthenticated?: boolean }) {
       setUser(session?.user ?? null);
       setLoading(false);
     });
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
-
     return () => subscription.unsubscribe();
   }, []);
 
@@ -28,10 +26,15 @@ export function useAuth(options?: { redirectOnUnauthenticated?: boolean }) {
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    window.location.href = "/";
   };
 
   return {
-    user,
+    user: user ? {
+      ...user,
+      name: user.user_metadata?.full_name ?? user.email ?? null,
+      isProvider: user.user_metadata?.isProvider ?? false,
+    } : null,
     loading,
     isAuthenticated: !!user,
     logout,
