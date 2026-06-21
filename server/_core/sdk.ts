@@ -16,21 +16,28 @@ export type AuthenticatedUser = User & {
 export const sdk = {
   async authenticateRequest(req: Request): Promise<AuthenticatedUser> {
     const authHeader = req.headers.authorization;
+    console.log("[Auth] Authorization header:", authHeader ? "present" : "missing");
+
     if (!authHeader?.startsWith("Bearer ")) {
+      console.log("[Auth] No Bearer token found");
       throw new Error("Missing or invalid Authorization header");
     }
 
     const token = authHeader.replace("Bearer ", "");
+    console.log("[Auth] Token length:", token.length);
 
     const { data, error } = await supabase.auth.getUser(token);
+    console.log("[Auth] Supabase getUser result:", error ? `error: ${error.message}` : `user: ${data.user?.id}`);
+
     if (error || !data.user) {
       throw new Error("Invalid Supabase token");
     }
 
     const supabaseUser = data.user;
-    const openId = supabaseUser.id; // use Supabase UUID as openId
+    const openId = supabaseUser.id;
 
     let user = await db.getUserByOpenId(openId);
+    console.log("[Auth] DB user found:", !!user);
 
     if (!user) {
       await db.upsertUser({
