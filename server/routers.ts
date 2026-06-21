@@ -12,7 +12,7 @@ import {
   type InsertBooking,
   type InsertReview,
 } from "../drizzle/schema";
-import { eq, and, desc, avg, count } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { z } from "zod";
 
 export const appRouter = router({
@@ -26,9 +26,7 @@ export const appRouter = router({
     }),
   }),
 
-  // ── Provider ────────────────────────────────────────────────────────────────
   provider: router({
-    // Become a provider (onboarding)
     onboard: protectedProcedure
       .input(
         z.object({
@@ -47,13 +45,12 @@ export const appRouter = router({
         return { success: true };
       }),
 
-    // List all providers (public)
     list: publicProcedure
       .input(
         z.object({
           category: z.string().optional(),
           search: z.string().optional(),
-        })
+        }).optional().default({})
       )
       .query(async ({ input }) => {
         const db = await getDb();
@@ -65,7 +62,6 @@ export const appRouter = router({
         return providers;
       }),
 
-    // Get single provider profile
     get: publicProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ input }) => {
@@ -93,7 +89,6 @@ export const appRouter = router({
       }),
   }),
 
-  // ── Services ─────────────────────────────────────────────────────────────────
   services: router({
     list: publicProcedure
       .input(
@@ -104,7 +99,7 @@ export const appRouter = router({
           search: z.string().optional(),
           minPrice: z.number().optional(),
           maxPrice: z.number().optional(),
-        })
+        }).optional().default({})
       )
       .query(async ({ input }) => {
         const db = await getDb();
@@ -177,28 +172,25 @@ export const appRouter = router({
       }),
   }),
 
-  // ── Bookings ─────────────────────────────────────────────────────────────────
   bookings: router({
     create: protectedProcedure
       .input(
         z.object({
           serviceId: z.number(),
           providerId: z.number(),
-          bookingDate: z.string(), // ISO string
+          bookingDate: z.string(),
           notes: z.string().optional(),
         })
       )
       .mutation(async ({ ctx, input }) => {
         const db = await getDb();
         if (!db) throw new Error("Database unavailable");
-
         const [service] = await db
           .select()
           .from(services)
           .where(eq(services.id, input.serviceId))
           .limit(1);
         if (!service) throw new Error("Service not found");
-
         await db.insert(bookings).values({
           customerId: ctx.user.id,
           providerId: input.providerId,
@@ -213,7 +205,7 @@ export const appRouter = router({
     myBookings: protectedProcedure.query(async ({ ctx }) => {
       const db = await getDb();
       if (!db) return [];
-      const myBookings = await db
+      return db
         .select({
           id: bookings.id,
           status: bookings.status,
@@ -231,13 +223,12 @@ export const appRouter = router({
         .innerJoin(users, eq(bookings.providerId, users.id))
         .where(eq(bookings.customerId, ctx.user.id))
         .orderBy(desc(bookings.createdAt));
-      return myBookings;
     }),
 
     providerJobs: protectedProcedure.query(async ({ ctx }) => {
       const db = await getDb();
       if (!db) return [];
-      const jobs = await db
+      return db
         .select({
           id: bookings.id,
           status: bookings.status,
@@ -254,7 +245,6 @@ export const appRouter = router({
         .innerJoin(users, eq(bookings.customerId, users.id))
         .where(eq(bookings.providerId, ctx.user.id))
         .orderBy(desc(bookings.createdAt));
-      return jobs;
     }),
 
     updateStatus: protectedProcedure
@@ -280,7 +270,6 @@ export const appRouter = router({
       }),
   }),
 
-  // ── Reviews ──────────────────────────────────────────────────────────────────
   reviews: router({
     create: protectedProcedure
       .input(
@@ -321,7 +310,6 @@ export const appRouter = router({
       }),
   }),
 
-  // ── Dashboard ────────────────────────────────────────────────────────────────
   dashboard: router({
     stats: protectedProcedure.query(async ({ ctx }) => {
       const db = await getDb();
@@ -332,21 +320,17 @@ export const appRouter = router({
           .select()
           .from(bookings)
           .where(eq(bookings.providerId, ctx.user.id));
-
         const completed = allJobs.filter((j) => j.status === "completed");
         const pending = allJobs.filter((j) => j.status === "pending").length;
         const earnings = completed.reduce((sum, j) => sum + (j.totalPrice || 0), 0);
-
         const providerReviews = await db
           .select()
           .from(reviews)
           .where(eq(reviews.providerId, ctx.user.id));
-
         const avgRating =
           providerReviews.length > 0
             ? providerReviews.reduce((s, r) => s + r.rating, 0) / providerReviews.length
             : 0;
-
         return {
           totalBookings: allJobs.length,
           totalEarnings: earnings,
