@@ -15,6 +15,7 @@ export function createTrpcClient() {
         async headers() {
           const { data } = await supabase.auth.getSession();
           const token = data.session?.access_token;
+          console.log("[tRPC] token present:", !!token);
           return token ? { Authorization: `Bearer ${token}` } : {};
         },
       }),
