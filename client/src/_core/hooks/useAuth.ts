@@ -1,42 +1,43 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { trpc } from "@/lib/trpc";
 
 export function useAuth(options?: { redirectOnUnauthenticated?: boolean }) {
-  const [user, setUser] = useState<any>(null);
+  const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+      setSession(session);
       setLoading(false);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      setSession(session);
       setLoading(false);
     });
     return () => subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
-    if (!loading && !user && options?.redirectOnUnauthenticated) {
+    if (!loading && !session && options?.redirectOnUnauthenticated) {
       window.location.href = "/auth";
     }
-  }, [loading, user, options?.redirectOnUnauthenticated]);
+  }, [loading, session, options?.redirectOnUnauthenticated]);
+
+  const { data: dbUser } = trpc.auth.me.useQuery(undefined, {
+    enabled: !!session,
+  });
 
   const logout = async () => {
     await supabase.auth.signOut();
-    setUser(null);
+    setSession(null);
     window.location.href = "/";
   };
 
   return {
-    user: user ? {
-      ...user,
-      name: user.user_metadata?.full_name ?? user.email ?? null,
-      isProvider: user.user_metadata?.isProvider ?? false,
-    } : null,
-    loading,
-    isAuthenticated: !!user,
+    user: dbUser ?? null,
+    loading: loading || (!!session && dbUser === undefined),
+    isAuthenticated: !!session,
     logout,
     refresh: () => {},
   };
