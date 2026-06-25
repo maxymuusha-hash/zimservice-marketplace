@@ -21,26 +21,20 @@ export const sdk = {
     if (!authHeader?.startsWith("Bearer ")) {
       throw new Error("Missing Authorization header");
     }
-
     const token = authHeader.replace("Bearer ", "");
     const { data, error } = await supabase.auth.getUser(token);
-
     if (error || !data.user) {
       throw new Error("Invalid Supabase token");
     }
-
     const supabaseUser = data.user;
     const openId = supabaseUser.id;
-
     const db = await getDb();
     if (!db) throw new Error("Database unavailable");
-
     let [user] = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
-
     if (!user) {
       await db.insert(users).values({
         openId,
-        name: supabaseUser.user_metadata?.full_name ?? supabaseUser.email ?? null,
+        name: supabaseUser.user_metadata?.full_name ?? supabaseUser.user_metadata?.name ?? supabaseUser.email ?? null,
         email: supabaseUser.email ?? null,
         loginMethod: "email",
         lastSignedIn: new Date(),
@@ -49,9 +43,7 @@ export const sdk = {
       });
       [user] = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
     }
-
     if (!user) throw new Error("User not found after insert");
-
     return user as AuthenticatedUser;
   },
 };
