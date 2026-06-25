@@ -12,6 +12,9 @@ export const users = pgTable("users", {
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
   isProvider: boolean("isProvider").default(false),
   bio: text("bio"),
+  subscriptionStatus: text("subscriptionStatus").default("none"),
+  subscriptionExpiry: timestamp("subscriptionExpiry"),
+  lastPaymentRef: text("lastPaymentRef"),
 });
 
 export const services = pgTable("services", {
