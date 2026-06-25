@@ -2,13 +2,31 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import Navbar from "@/components/Navbar";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
-import { CheckCircle, Briefcase, DollarSign, Star, Shield } from "lucide-react";
+import { CheckCircle, DollarSign, Star, Shield, ArrowRight, Zap } from "lucide-react";
 import { getLoginUrl } from "@/const";
+
+const inputStyle = {
+  width: "100%",
+  padding: "12px 16px",
+  border: "2px solid #E2E8F0",
+  borderRadius: "10px",
+  fontSize: "15px",
+  outline: "none",
+  boxSizing: "border-box" as const,
+  fontFamily: "Inter, sans-serif",
+  background: "#FAFAFA",
+  color: "#0F172A",
+};
+
+const labelStyle = {
+  fontSize: "14px",
+  fontWeight: 600 as const,
+  color: "#374151",
+  display: "block" as const,
+  marginBottom: "8px",
+};
 
 export default function ProviderOnboarding() {
   const { user, isAuthenticated, loading } = useAuth({ redirectOnUnauthenticated: false });
@@ -16,12 +34,11 @@ export default function ProviderOnboarding() {
   const [step, setStep] = useState(1);
   const [bio, setBio] = useState("");
   const [phone, setPhone] = useState("");
-  const [location, setLocation2] = useState("");
+  const [location2, setLocation2] = useState("");
 
-  // Service form
   const [serviceName, setServiceName] = useState("");
   const [serviceDesc, setServiceDesc] = useState("");
-  const [serviceCategory, setServiceCategory] = useState<string>("household chores");
+  const [serviceCategory, setServiceCategory] = useState("household chores");
   const [servicePrice, setServicePrice] = useState("");
   const [serviceUnit, setServiceUnit] = useState("hour");
 
@@ -33,13 +50,13 @@ export default function ProviderOnboarding() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background">
+      <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#F8FAFC" }}>
         <Navbar />
-        <div className="container py-20 text-center max-w-md mx-auto">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Sign in to become a provider</h2>
-          <Button asChild className="btn-primary">
-            <a href={getLoginUrl()}>Sign In</a>
-          </Button>
+        <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E1B4B 100%)", padding: "80px 24px", textAlign: "center" }}>
+          <h2 style={{ fontSize: "32px", fontWeight: 800, color: "#fff", marginBottom: "16px", fontFamily: "Playfair Display, serif" }}>Sign in to become a provider</h2>
+          <button onClick={() => window.location.href = getLoginUrl()} style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 600, cursor: "pointer" }}>
+            Sign In
+          </button>
         </div>
       </div>
     );
@@ -47,25 +64,40 @@ export default function ProviderOnboarding() {
 
   if (user?.isProvider) {
     return (
-      <div className="min-h-screen bg-background">
+      <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#F8FAFC" }}>
         <Navbar />
-        <div className="container py-20 text-center max-w-md mx-auto">
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-foreground mb-2">You're already a provider!</h2>
-          <p className="text-muted-foreground mb-6">Manage your services and bookings from the dashboard.</p>
-          <Button onClick={() => setLocation("/dashboard")} className="btn-primary">Go to Dashboard</Button>
+        {/* Dark hero */}
+        <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E1B4B 100%)", padding: "80px 24px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+          <div style={{ position: "absolute", top: "-60px", right: "-60px", width: "300px", height: "300px", background: "radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)", borderRadius: "50%" }} />
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <div style={{ width: "80px", height: "80px", background: "rgba(52,211,153,0.15)", border: "2px solid #34D399", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+              <CheckCircle size={40} color="#34D399" />
+            </div>
+            <div style={{ display: "inline-block", background: "rgba(52,211,153,0.15)", color: "#34D399", padding: "4px 16px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "16px", border: "1px solid rgba(52,211,153,0.3)" }}>
+              ✓ Verified Provider
+            </div>
+            <h1 style={{ fontSize: "40px", fontWeight: 800, color: "#fff", margin: "0 0 12px", fontFamily: "Playfair Display, serif" }}>
+              You're already a provider!
+            </h1>
+            <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.65)", marginBottom: "32px" }}>
+              Manage your services and bookings from the dashboard.
+            </p>
+            <button
+              onClick={() => setLocation("/dashboard")}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 16px rgba(99,102,241,0.4)" }}
+            >
+              Go to Dashboard <ArrowRight size={18} />
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   const handleOnboard = async () => {
-    if (bio.length < 10) {
-      toast.error("Bio must be at least 10 characters");
-      return;
-    }
+    if (bio.length < 10) { toast.error("Bio must be at least 10 characters"); return; }
     try {
-      await onboard.mutateAsync({ bio, phone, location });
+      await onboard.mutateAsync({ bio, phone, location: location2 });
       await utils.auth.me.invalidate();
       setStep(2);
     } catch (e: any) {
@@ -74,10 +106,7 @@ export default function ProviderOnboarding() {
   };
 
   const handleAddService = async () => {
-    if (!serviceName || !servicePrice) {
-      toast.error("Service name and price are required");
-      return;
-    }
+    if (!serviceName || !servicePrice) { toast.error("Service name and price are required"); return; }
     try {
       await createService.mutateAsync({
         name: serviceName,
@@ -94,124 +123,142 @@ export default function ProviderOnboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#F8FAFC" }}>
       <Navbar />
-      <div className="container py-12 max-w-2xl mx-auto">
 
-        {/* Progress */}
-        <div className="flex items-center gap-3 mb-10">
-          {[1, 2].map((s) => (
-            <div key={s} className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step >= s ? "bg-accent text-white" : "bg-muted text-muted-foreground"}`}>
-                {step > s ? <CheckCircle className="w-5 h-5" /> : s}
+      {/* Dark Hero */}
+      <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E1B4B 100%)", padding: "56px 24px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "-60px", right: "-60px", width: "300px", height: "300px", background: "radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)", borderRadius: "50%" }} />
+        <div style={{ position: "absolute", bottom: "-40px", left: "5%", width: "200px", height: "200px", background: "radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%)", borderRadius: "50%" }} />
+        <div style={{ maxWidth: "760px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(99,102,241,0.2)", color: "#A5B4FC", padding: "6px 16px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "16px", border: "1px solid rgba(99,102,241,0.3)" }}>
+            <Zap size={13} /> Start Earning Today
+          </div>
+          <h1 style={{ fontSize: "40px", fontWeight: 800, color: "#fff", margin: "0 0 12px", fontFamily: "Playfair Display, serif", lineHeight: 1.15 }}>
+            Become a{" "}
+            <span style={{ background: "linear-gradient(135deg, #60A5FA, #A78BFA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              ZimService Provider
+            </span>
+          </h1>
+          <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.65)", margin: "0 0 32px", maxWidth: "480px", lineHeight: 1.6 }}>
+            Join 500+ verified providers earning on their own schedule. Set your rates, choose your jobs.
+          </p>
+
+          {/* Benefits */}
+          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+            {[
+              { icon: DollarSign, text: "Earn on your schedule", color: "#34D399" },
+              { icon: Star, text: "Build your reputation", color: "#FBBF24" },
+              { icon: Shield, text: "Secure Paynow payments", color: "#60A5FA" },
+            ].map(({ icon: Icon, text, color }) => (
+              <div key={text} style={{ display: "flex", alignItems: "center", gap: "8px", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)", padding: "10px 16px", borderRadius: "10px" }}>
+                <Icon size={16} color={color} />
+                <span style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", fontWeight: 500 }}>{text}</span>
               </div>
-              <span className={`text-sm ${step >= s ? "text-foreground font-medium" : "text-muted-foreground"}`}>
-                {s === 1 ? "Your Profile" : "Add a Service"}
-              </span>
-              {s < 2 && <div className={`h-px w-8 ${step > s ? "bg-accent" : "bg-border"}`} />}
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Form */}
+      <div style={{ maxWidth: "680px", margin: "0 auto", padding: "40px 24px" }}>
+
+        {/* Progress Steps */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0", marginBottom: "32px" }}>
+          {[{ n: 1, label: "Your Profile" }, { n: 2, label: "Add a Service" }].map(({ n, label }, i) => (
+            <div key={n} style={{ display: "flex", alignItems: "center", flex: i < 1 ? "none" : 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ width: "36px", height: "36px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 700, background: step >= n ? "linear-gradient(135deg, #3B82F6, #6366F1)" : "#E2E8F0", color: step >= n ? "#fff" : "#94A3B8", flexShrink: 0 }}>
+                  {step > n ? <CheckCircle size={18} /> : n}
+                </div>
+                <span style={{ fontSize: "14px", fontWeight: 600, color: step >= n ? "#0F172A" : "#94A3B8", whiteSpace: "nowrap" }}>{label}</span>
+              </div>
+              {i < 1 && <div style={{ flex: 1, height: "2px", background: step > 1 ? "linear-gradient(135deg, #3B82F6, #6366F1)" : "#E2E8F0", margin: "0 16px" }} />}
             </div>
           ))}
         </div>
 
+        {/* Step 1 */}
         {step === 1 && (
-          <div>
-            {/* Benefits */}
-            <div className="grid grid-cols-3 gap-4 mb-8">
-              {[
-                { icon: DollarSign, label: "Earn on your schedule" },
-                { icon: Star, label: "Build your reputation" },
-                { icon: Shield, label: "Secure Paynow payments" },
-              ].map(({ icon: Icon, label }) => (
-                <div key={label} className="card-elegant text-center">
-                  <Icon className="w-6 h-6 text-accent mx-auto mb-2" />
-                  <p className="text-xs text-muted-foreground">{label}</p>
-                </div>
-              ))}
-            </div>
+          <div style={{ background: "#fff", borderRadius: "20px", border: "1px solid #E2E8F0", padding: "32px", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
+            <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#0F172A", margin: "0 0 6px", fontFamily: "Playfair Display, serif" }}>
+              Tell customers about yourself
+            </h2>
+            <p style={{ fontSize: "14px", color: "#64748B", margin: "0 0 24px" }}>This will appear on your public profile</p>
 
-            <div className="card-elegant">
-              <h2 className="text-xl font-bold text-foreground mb-4">Tell customers about yourself</h2>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-1 block">Bio <span className="text-destructive">*</span></label>
-                  <Textarea
-                    placeholder="Describe your experience, skills, and what makes you a great service provider..."
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    rows={4}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">{bio.length}/1000 characters (minimum 10)</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-1 block">Phone Number</label>
-                  <Input placeholder="+263 77 123 4567" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-1 block">Location</label>
-                  <Input placeholder="Harare, Zimbabwe" value={location} onChange={(e) => setLocation2(e.target.value)} />
-                </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              <div>
+                <label style={labelStyle}>Bio <span style={{ color: "#EF4444" }}>*</span></label>
+                <textarea
+                  placeholder="Describe your experience, skills, and what makes you a great service provider..."
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  rows={4}
+                  style={{ ...inputStyle, resize: "vertical" as const }}
+                />
+                <p style={{ fontSize: "12px", color: "#94A3B8", marginTop: "6px" }}>{bio.length}/1000 characters (minimum 10)</p>
               </div>
-
-              <Button
-                onClick={handleOnboard}
-                disabled={onboard.isPending}
-                className="btn-primary w-full mt-6"
-              >
-                {onboard.isPending ? "Registering..." : "Continue to Add Services →"}
-              </Button>
+              <div>
+                <label style={labelStyle}>Phone Number</label>
+                <input type="tel" placeholder="+263 77 123 4567" value={phone} onChange={(e) => setPhone(e.target.value)} style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>Location</label>
+                <input type="text" placeholder="Harare, Zimbabwe" value={location2} onChange={(e) => setLocation2(e.target.value)} style={inputStyle} />
+              </div>
             </div>
+
+            <button
+              onClick={handleOnboard}
+              disabled={onboard.isPending}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", width: "100%", marginTop: "24px", padding: "16px", border: "none", borderRadius: "12px", background: onboard.isPending ? "#94A3B8" : "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", fontSize: "16px", fontWeight: 700, cursor: onboard.isPending ? "not-allowed" : "pointer", boxShadow: "0 4px 16px rgba(99,102,241,0.3)" }}
+            >
+              {onboard.isPending ? "Registering..." : <><span>Continue to Add Services</span><ArrowRight size={18} /></>}
+            </button>
           </div>
         )}
 
+        {/* Step 2 */}
         {step === 2 && (
-          <div className="card-elegant">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+          <div style={{ background: "#fff", borderRadius: "20px", border: "1px solid #E2E8F0", padding: "32px", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "24px" }}>
+              <div style={{ width: "44px", height: "44px", background: "#DCFCE7", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <CheckCircle size={24} color="#16A34A" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-foreground">Profile created!</h2>
-                <p className="text-sm text-muted-foreground">Now add your first service</p>
+                <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#0F172A", margin: 0, fontFamily: "Playfair Display, serif" }}>Profile created! 🎉</h2>
+                <p style={{ fontSize: "14px", color: "#64748B", margin: 0 }}>Now add your first service listing</p>
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               <div>
-                <label className="text-sm font-medium text-foreground mb-1 block">Service Name <span className="text-destructive">*</span></label>
-                <Input placeholder="e.g. House Cleaning, Plumbing Repairs..." value={serviceName} onChange={(e) => setServiceName(e.target.value)} />
+                <label style={labelStyle}>Service Name <span style={{ color: "#EF4444" }}>*</span></label>
+                <input type="text" placeholder="e.g. House Cleaning, Plumbing Repairs..." value={serviceName} onChange={(e) => setServiceName(e.target.value)} style={inputStyle} />
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground mb-1 block">Category <span className="text-destructive">*</span></label>
-                <select
-                  value={serviceCategory}
-                  onChange={(e) => setServiceCategory(e.target.value)}
-                  className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background text-foreground"
-                >
-                  <option value="household chores">Household Chores</option>
-                  <option value="repairs">Repairs</option>
-                  <option value="personal care">Personal Care</option>
-                  <option value="skilled trades">Skilled Trades</option>
+                <label style={labelStyle}>Category <span style={{ color: "#EF4444" }}>*</span></label>
+                <select value={serviceCategory} onChange={(e) => setServiceCategory(e.target.value)} style={{ ...inputStyle, appearance: "auto" as const }}>
+                  <option value="household chores">🏠 Household Chores</option>
+                  <option value="repairs">🔧 Repairs</option>
+                  <option value="personal care">💆 Personal Care</option>
+                  <option value="skilled trades">⚒️ Skilled Trades</option>
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground mb-1 block">Description</label>
-                <Textarea placeholder="Describe what's included in this service..." value={serviceDesc} onChange={(e) => setServiceDesc(e.target.value)} rows={3} />
+                <label style={labelStyle}>Description</label>
+                <textarea placeholder="Describe what's included in this service..." value={serviceDesc} onChange={(e) => setServiceDesc(e.target.value)} rows={3} style={{ ...inputStyle, resize: "vertical" as const }} />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-1 block">Price (USD) <span className="text-destructive">*</span></label>
-                  <Input type="number" placeholder="25" value={servicePrice} onChange={(e) => setServicePrice(e.target.value)} min="1" />
+                  <label style={labelStyle}>Price (USD) <span style={{ color: "#EF4444" }}>*</span></label>
+                  <input type="number" placeholder="25" value={servicePrice} onChange={(e) => setServicePrice(e.target.value)} min="1" style={inputStyle} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-1 block">Unit</label>
-                  <select
-                    value={serviceUnit}
-                    onChange={(e) => setServiceUnit(e.target.value)}
-                    className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background text-foreground"
-                  >
+                  <label style={labelStyle}>Pricing Unit</label>
+                  <select value={serviceUnit} onChange={(e) => setServiceUnit(e.target.value)} style={{ ...inputStyle, appearance: "auto" as const }}>
                     <option value="hour">per hour</option>
-                    <option value="job">per job</option>
+                    <option value="job">per job (fixed)</option>
                     <option value="day">per day</option>
                     <option value="visit">per visit</option>
                   </select>
@@ -219,13 +266,20 @@ export default function ProviderOnboarding() {
               </div>
             </div>
 
-            <div className="flex gap-3 mt-6">
-              <Button variant="outline" onClick={() => setLocation("/dashboard")} className="flex-1">
+            <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
+              <button
+                onClick={() => setLocation("/dashboard")}
+                style={{ flex: 1, padding: "14px", border: "1px solid #E2E8F0", borderRadius: "12px", background: "#fff", color: "#64748B", fontSize: "15px", fontWeight: 600, cursor: "pointer" }}
+              >
                 Skip for now
-              </Button>
-              <Button onClick={handleAddService} disabled={createService.isPending} className="btn-primary flex-1">
-                {createService.isPending ? "Adding..." : "Add Service & Go to Dashboard"}
-              </Button>
+              </button>
+              <button
+                onClick={handleAddService}
+                disabled={createService.isPending}
+                style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "14px", border: "none", borderRadius: "12px", background: createService.isPending ? "#94A3B8" : "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", fontSize: "15px", fontWeight: 700, cursor: createService.isPending ? "not-allowed" : "pointer", boxShadow: "0 4px 16px rgba(99,102,241,0.3)" }}
+              >
+                {createService.isPending ? "Adding..." : <><span>Add Service & Go to Dashboard</span><ArrowRight size={16} /></>}
+              </button>
             </div>
           </div>
         )}
