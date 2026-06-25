@@ -3,28 +3,22 @@ import { useParams } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import Navbar from "@/components/Navbar";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Star, MapPin, Calendar, Clock, CheckCircle } from "lucide-react";
+import { Star, CheckCircle, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { getLoginUrl } from "@/const";
 
-const CATEGORY_COLORS: Record<string, string> = {
-  "household chores": "bg-blue-100 text-blue-700",
-  "repairs": "bg-orange-100 text-orange-700",
-  "personal care": "bg-pink-100 text-pink-700",
-  "skilled trades": "bg-amber-100 text-amber-700",
+const CATEGORY_STYLE: Record<string, { bg: string; text: string; icon: string }> = {
+  "household chores": { bg: "#EFF6FF", text: "#1D4ED8", icon: "🏠" },
+  "repairs": { bg: "#FFF7ED", text: "#C2410C", icon: "🔧" },
+  "personal care": { bg: "#FDF2F8", text: "#BE185D", icon: "💆" },
+  "skilled trades": { bg: "#FFFBEB", text: "#B45309", icon: "⚒️" },
 };
 
 function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
   return (
-    <div className="flex gap-0.5">
+    <div style={{ display: "flex", gap: "2px" }}>
       {Array.from({ length: max }).map((_, i) => (
-        <Star
-          key={i}
-          className={`w-4 h-4 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-muted"}`}
-        />
+        <Star key={i} size={14} fill={i < rating ? "#FBBF24" : "none"} color={i < rating ? "#FBBF24" : "#CBD5E1"} />
       ))}
     </div>
   );
@@ -43,11 +37,21 @@ function BookingModal({
   const [time, setTime] = useState("");
   const createBooking = trpc.bookings.create.useMutation();
 
+  const inputStyle = {
+    width: "100%",
+    padding: "12px 16px",
+    border: "2px solid #E2E8F0",
+    borderRadius: "10px",
+    fontSize: "15px",
+    outline: "none",
+    boxSizing: "border-box" as const,
+    background: "#fff",
+    color: "#0F172A",
+    fontFamily: "Inter, sans-serif",
+  };
+
   const handleBook = async () => {
-    if (!date || !time) {
-      toast.error("Please select a date and time");
-      return;
-    }
+    if (!date || !time) { toast.error("Please select a date and time"); return; }
     try {
       await createBooking.mutateAsync({
         serviceId: service.id,
@@ -62,34 +66,61 @@ function BookingModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-card rounded-2xl p-6 max-w-md w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
-        <h3 className="text-xl font-bold text-foreground mb-1">Book Service</h3>
-        <p className="text-muted-foreground text-sm mb-4">{service.name}</p>
+    <div style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }} onClick={onClose}>
+      <div style={{ background: "#fff", borderRadius: "20px", padding: "28px", maxWidth: "440px", width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
+        
+        {/* Header */}
+        <h3 style={{ fontSize: "20px", fontWeight: 800, color: "#0F172A", margin: "0 0 4px", fontFamily: "Playfair Display, serif" }}>Book Service</h3>
+        <p style={{ fontSize: "14px", color: "#64748B", margin: "0 0 20px" }}>{service.name}</p>
 
-        <div className="bg-accent/10 rounded-lg p-3 mb-4 flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Total Price</span>
-          <span className="text-xl font-bold text-accent">${service.price}<span className="text-sm font-normal text-muted-foreground">/{service.unit || "job"}</span></span>
+        {/* Price */}
+        <div style={{ background: "#F0F9FF", border: "1px solid #BAE6FD", borderRadius: "12px", padding: "14px 16px", marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontSize: "14px", color: "#64748B" }}>Total Price</span>
+          <span style={{ fontSize: "22px", fontWeight: 800, color: "#3B82F6" }}>
+            ${service.price}
+            <span style={{ fontSize: "13px", fontWeight: 400, color: "#94A3B8" }}>/{service.unit || "job"}</span>
+          </span>
         </div>
 
-        <div className="space-y-3 mb-4">
+        {/* Date & Time */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginBottom: "16px" }}>
           <div>
-            <label className="text-sm font-medium text-foreground mb-1 block">Date</label>
-            <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} min={new Date().toISOString().split("T")[0]} />
+            <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "8px" }}>📅 Date</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              min={new Date().toISOString().split("T")[0]}
+              style={inputStyle}
+            />
           </div>
           <div>
-            <label className="text-sm font-medium text-foreground mb-1 block">Time</label>
-            <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+            <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "8px" }}>🕐 Time</label>
+            <input
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              style={inputStyle}
+            />
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground mb-4">Payment via Paynow will be collected at time of service completion.</p>
+        <p style={{ fontSize: "12px", color: "#94A3B8", marginBottom: "20px" }}>
+          💳 Payment via Paynow will be collected at time of service completion.
+        </p>
 
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={onClose} className="flex-1">Cancel</Button>
-          <Button onClick={handleBook} disabled={createBooking.isPending} className="flex-1 btn-primary">
+        {/* Buttons */}
+        <div style={{ display: "flex", gap: "12px" }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "12px", border: "1px solid #E2E8F0", borderRadius: "10px", background: "#fff", cursor: "pointer", fontWeight: 600, color: "#64748B", fontSize: "15px" }}>
+            Cancel
+          </button>
+          <button
+            onClick={handleBook}
+            disabled={createBooking.isPending}
+            style={{ flex: 1, padding: "12px", border: "none", borderRadius: "10px", background: createBooking.isPending ? "#94A3B8" : "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", cursor: createBooking.isPending ? "not-allowed" : "pointer", fontWeight: 700, fontSize: "15px", boxShadow: "0 4px 12px rgba(99,102,241,0.3)" }}
+          >
             {createBooking.isPending ? "Booking..." : "Confirm Booking"}
-          </Button>
+          </button>
         </div>
       </div>
     </div>
@@ -110,22 +141,17 @@ export default function ProviderProfile() {
     : 0;
 
   const handleBook = (service: typeof selectedService) => {
-    if (!isAuthenticated) {
-      window.location.href = getLoginUrl();
-      return;
-    }
+    if (!isAuthenticated) { window.location.href = getLoginUrl(); return; }
     setSelectedService(service);
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#F8FAFC" }}>
         <Navbar />
-        <div className="container py-12">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-muted rounded w-1/3" />
-            <div className="h-4 bg-muted rounded w-2/3" />
-          </div>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "48px 24px" }}>
+          <div style={{ height: "32px", background: "#F1F5F9", borderRadius: "8px", width: "30%", marginBottom: "16px" }} />
+          <div style={{ height: "16px", background: "#F1F5F9", borderRadius: "8px", width: "60%" }} />
         </div>
       </div>
     );
@@ -133,99 +159,111 @@ export default function ProviderProfile() {
 
   if (!provider) {
     return (
-      <div className="min-h-screen bg-background">
+      <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#F8FAFC" }}>
         <Navbar />
-        <div className="container py-20 text-center">
-          <h2 className="text-2xl font-bold text-foreground">Provider not found</h2>
+        <div style={{ textAlign: "center", padding: "80px 24px" }}>
+          <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#0F172A" }}>Provider not found</h2>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#F8FAFC" }}>
       <Navbar />
 
       {selectedService && (
-        <BookingModal
-          service={selectedService}
-          providerId={providerId}
-          onClose={() => setSelectedService(null)}
-        />
+        <BookingModal service={selectedService} providerId={providerId} onClose={() => setSelectedService(null)} />
       )}
 
-      <div className="container py-8 max-w-4xl">
-        {/* Provider Header */}
-        <div className="card-elegant mb-6">
-          <div className="flex flex-col sm:flex-row gap-6">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center text-white text-3xl font-bold shrink-0">
+      {/* Dark Hero */}
+      <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E1B4B 100%)", padding: "48px 0", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "-60px", right: "-60px", width: "300px", height: "300px", background: "radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)", borderRadius: "50%" }} />
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px", position: "relative", zIndex: 1 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
+            <div style={{ width: "72px", height: "72px", borderRadius: "18px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", fontWeight: 800, color: "#fff", flexShrink: 0 }}>
               {provider.name?.[0]?.toUpperCase() || "P"}
             </div>
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-foreground mb-1">{provider.name || "Service Provider"}</h1>
+            <div>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(52,211,153,0.15)", color: "#34D399", padding: "4px 12px", borderRadius: "999px", fontSize: "12px", fontWeight: 600, marginBottom: "8px", border: "1px solid rgba(52,211,153,0.3)" }}>
+                <CheckCircle size={12} /> Verified Provider
+              </div>
+              <h1 style={{ fontSize: "32px", fontWeight: 800, color: "#fff", margin: "0 0 6px", fontFamily: "Playfair Display, serif" }}>
+                {provider.name || "Service Provider"}
+              </h1>
               {reviews.length > 0 && (
-                <div className="flex items-center gap-2 mb-2">
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   <StarRating rating={Math.round(avgRating)} />
-                  <span className="text-sm text-muted-foreground">{avgRating.toFixed(1)} ({reviews.length} reviews)</span>
+                  <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.65)" }}>{avgRating.toFixed(1)} ({reviews.length} reviews)</span>
                 </div>
               )}
-              <div className="flex items-center gap-1 text-sm text-muted-foreground mb-3">
-                <CheckCircle className="w-4 h-4 text-green-500" />
-                <span>Verified Provider</span>
-              </div>
-              {provider.bio && <p className="text-muted-foreground">{provider.bio}</p>}
             </div>
           </div>
+          {provider.bio && (
+            <p style={{ fontSize: "15px", color: "rgba(255,255,255,0.65)", marginTop: "20px", maxWidth: "600px", lineHeight: 1.7 }}>
+              {provider.bio}
+            </p>
+          )}
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Main Content */}
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px 24px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "24px" }}>
+
           {/* Services */}
-          <div className="lg:col-span-2 space-y-4">
-            <h2 className="text-xl font-bold text-foreground">Services Offered</h2>
+          <div>
+            <h2 style={{ fontSize: "20px", fontWeight: 700, color: "#0F172A", marginBottom: "16px" }}>Services Offered</h2>
             {provider.services.length === 0 ? (
-              <p className="text-muted-foreground">No services listed yet.</p>
+              <p style={{ color: "#64748B" }}>No services listed yet.</p>
             ) : (
-              provider.services.map((service) => (
-                <div key={service.id} className="card-elegant flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Badge className={`text-xs ${CATEGORY_COLORS[service.category] || ""}`}>{service.category}</Badge>
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {provider.services.map((service) => (
+                  <div key={service.id} style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", padding: "24px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
+                      <div style={{ flex: 1 }}>
+                        <span style={{ padding: "4px 10px", borderRadius: "999px", fontSize: "12px", fontWeight: 700, background: CATEGORY_STYLE[service.category]?.bg ?? "#F1F5F9", color: CATEGORY_STYLE[service.category]?.text ?? "#64748B", display: "inline-block", marginBottom: "10px" }}>
+                          {CATEGORY_STYLE[service.category]?.icon} {service.category}
+                        </span>
+                        <h3 style={{ fontSize: "17px", fontWeight: 700, color: "#0F172A", margin: "0 0 6px" }}>{service.name}</h3>
+                        {service.description && <p style={{ fontSize: "14px", color: "#64748B", margin: 0, lineHeight: 1.6 }}>{service.description}</p>}
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "16px", flexShrink: 0 }}>
+                        <div style={{ textAlign: "right" }}>
+                          <p style={{ fontSize: "22px", fontWeight: 800, color: "#3B82F6", margin: 0 }}>${service.price}</p>
+                          <p style={{ fontSize: "12px", color: "#94A3B8", margin: 0 }}>per {service.unit || "job"}</p>
+                        </div>
+                        <button
+                          onClick={() => handleBook({ id: service.id, name: service.name, price: service.price, unit: service.unit })}
+                          style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "10px 20px", borderRadius: "10px", fontSize: "14px", fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 12px rgba(99,102,241,0.3)", whiteSpace: "nowrap" }}
+                        >
+                          Book Now
+                        </button>
+                      </div>
                     </div>
-                    <h3 className="font-semibold text-foreground">{service.name}</h3>
-                    {service.description && <p className="text-sm text-muted-foreground mt-1">{service.description}</p>}
                   </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div className="text-right">
-                      <p className="text-xl font-bold text-accent">${service.price}</p>
-                      <p className="text-xs text-muted-foreground">per {service.unit || "job"}</p>
-                    </div>
-                    <Button
-                      onClick={() => handleBook({ id: service.id, name: service.name, price: service.price, unit: service.unit })}
-                      className="btn-primary"
-                      size="sm"
-                    >
-                      Book Now
-                    </Button>
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
 
-          {/* Reviews Sidebar */}
+          {/* Reviews */}
           <div>
-            <h2 className="text-xl font-bold text-foreground mb-4">Reviews</h2>
+            <h2 style={{ fontSize: "20px", fontWeight: 700, color: "#0F172A", marginBottom: "16px" }}>Reviews</h2>
             {reviews.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No reviews yet — be the first!</p>
+              <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", padding: "24px", textAlign: "center" }}>
+                <p style={{ fontSize: "24px", marginBottom: "8px" }}>⭐</p>
+                <p style={{ color: "#64748B", fontSize: "14px" }}>No reviews yet — be the first!</p>
+              </div>
             ) : (
-              <div className="space-y-3">
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {reviews.map((review) => (
-                  <div key={review.id} className="card-elegant">
-                    <div className="flex items-center gap-2 mb-2">
+                  <div key={review.id} style={{ background: "#fff", borderRadius: "14px", border: "1px solid #E2E8F0", padding: "16px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
                       <StarRating rating={review.rating} />
-                      <span className="text-xs text-muted-foreground">{review.customerName}</span>
+                      <span style={{ fontSize: "13px", color: "#64748B", fontWeight: 500 }}>{review.customerName}</span>
                     </div>
-                    {review.comment && <p className="text-sm text-muted-foreground">{review.comment}</p>}
+                    {review.comment && <p style={{ fontSize: "14px", color: "#475569", margin: 0, lineHeight: 1.6 }}>{review.comment}</p>}
                   </div>
                 ))}
               </div>
