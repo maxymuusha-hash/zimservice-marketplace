@@ -1,3 +1,4 @@
+import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRoot } from "react-dom/client";
 import App from "./App";
@@ -5,9 +6,7 @@ import "./index.css";
 import { trpc, createTrpcClient } from "./lib/trpc";
 
 const queryClient = new QueryClient();
-const trpcClient = createTrpcClient();
 
-// Keep Render free tier warm by pinging every 10 minutes
 const BACKEND_URL = import.meta.env.VITE_SERVER_URL;
 if (BACKEND_URL) {
   setInterval(() => {
@@ -16,10 +15,19 @@ if (BACKEND_URL) {
   }, 10 * 60 * 1000);
 }
 
+function TrpcProvider({ children }: { children: React.ReactNode }) {
+  const [trpcClient] = React.useState(() => createTrpcClient());
+  return (
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      {children}
+    </trpc.Provider>
+  );
+}
+
 createRoot(document.getElementById("root")!).render(
-  <trpc.Provider client={trpcClient} queryClient={queryClient}>
-    <QueryClientProvider client={queryClient}>
+  <QueryClientProvider client={queryClient}>
+    <TrpcProvider>
       <App />
-    </QueryClientProvider>
-  </trpc.Provider>
+    </TrpcProvider>
+  </QueryClientProvider>
 );
