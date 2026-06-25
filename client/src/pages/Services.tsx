@@ -2,21 +2,21 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import Navbar from "@/components/Navbar";
 import { useLocation } from "wouter";
-import { Search, Briefcase, Home as HomeIcon, Heart, Wrench, ChevronRight } from "lucide-react";
+import { Search, Briefcase, Home as HomeIcon, Heart, Wrench, ChevronRight, Star, Zap } from "lucide-react";
 
 const CATEGORIES = [
-  { id: "all", label: "All Services" },
-  { id: "household chores", label: "Household Chores", bg: "#3B82F6", light: "#EFF6FF", textColor: "#1D4ED8" },
-  { id: "repairs", label: "Repairs", bg: "#F97316", light: "#FFF7ED", textColor: "#C2410C" },
-  { id: "personal care", label: "Personal Care", bg: "#EC4899", light: "#FDF2F8", textColor: "#BE185D" },
-  { id: "skilled trades", label: "Skilled Trades", bg: "#F59E0B", light: "#FFFBEB", textColor: "#B45309" },
+  { id: "all", label: "✨ All Services" },
+  { id: "household chores", label: "🏠 Household Chores", bg: "#3B82F6", light: "#EFF6FF", textColor: "#1D4ED8" },
+  { id: "repairs", label: "🔧 Repairs", bg: "#F97316", light: "#FFF7ED", textColor: "#C2410C" },
+  { id: "personal care", label: "💆 Personal Care", bg: "#EC4899", light: "#FDF2F8", textColor: "#BE185D" },
+  { id: "skilled trades", label: "⚒️ Skilled Trades", bg: "#F59E0B", light: "#FFFBEB", textColor: "#B45309" },
 ] as const;
 
-const CATEGORY_STYLE: Record<string, { bg: string; text: string }> = {
-  "household chores": { bg: "#EFF6FF", text: "#1D4ED8" },
-  "repairs": { bg: "#FFF7ED", text: "#C2410C" },
-  "personal care": { bg: "#FDF2F8", text: "#BE185D" },
-  "skilled trades": { bg: "#FFFBEB", text: "#B45309" },
+const CATEGORY_STYLE: Record<string, { bg: string; text: string; icon: string }> = {
+  "household chores": { bg: "#EFF6FF", text: "#1D4ED8", icon: "🏠" },
+  "repairs": { bg: "#FFF7ED", text: "#C2410C", icon: "🔧" },
+  "personal care": { bg: "#FDF2F8", text: "#BE185D", icon: "💆" },
+  "skilled trades": { bg: "#FFFBEB", text: "#B45309", icon: "⚒️" },
 };
 
 export default function ServicesPage() {
@@ -34,49 +34,68 @@ export default function ServicesPage() {
       <Navbar />
 
       {/* Hero Banner */}
-      <div style={{ background: "linear-gradient(135deg, #f0f7ff 0%, #ffffff 50%, #f5f0ff 100%)", borderBottom: "1px solid #E2E8F0", padding: "48px 0" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
-          <div style={{ display: "inline-block", background: "#EEF2FF", color: "#4F46E5", padding: "4px 14px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "12px" }}>
-            🔍 Browse Services
-          </div>
-          <h1 style={{ fontSize: "40px", fontWeight: 800, color: "#0F172A", margin: "0 0 8px", fontFamily: "Playfair Display, serif" }}>
-            Find Local Services
-          </h1>
-          <p style={{ fontSize: "16px", color: "#64748B", margin: "0 0 24px" }}>Browse vetted providers near you</p>
+      <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E1B4B 100%)", padding: "64px 0 80px", position: "relative", overflow: "hidden" }}>
+        {/* Decorative blobs */}
+        <div style={{ position: "absolute", top: "-60px", right: "-60px", width: "300px", height: "300px", background: "radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)", borderRadius: "50%" }} />
+        <div style={{ position: "absolute", bottom: "-40px", left: "10%", width: "200px", height: "200px", background: "radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%)", borderRadius: "50%" }} />
 
-          {/* Search */}
-          <div style={{ position: "relative", maxWidth: "520px" }}>
-            <Search size={18} color="#94A3B8" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)" }} />
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px", position: "relative", zIndex: 1 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(99,102,241,0.2)", color: "#A5B4FC", padding: "6px 16px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "20px", border: "1px solid rgba(99,102,241,0.3)" }}>
+            <Zap size={13} /> Zimbabwe's #1 Service Marketplace
+          </div>
+          <h1 style={{ fontSize: "52px", fontWeight: 800, color: "#fff", margin: "0 0 16px", fontFamily: "Playfair Display, serif", lineHeight: 1.1 }}>
+            Find Trusted Local<br />
+            <span style={{ background: "linear-gradient(135deg, #60A5FA, #A78BFA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              Services Near You
+            </span>
+          </h1>
+          <p style={{ fontSize: "18px", color: "rgba(255,255,255,0.7)", margin: "0 0 36px", maxWidth: "500px", lineHeight: 1.6 }}>
+            Browse vetted, background-checked providers for any job — big or small.
+          </p>
+
+          {/* Search bar */}
+          <div style={{ position: "relative", maxWidth: "580px" }}>
+            <Search size={20} color="#94A3B8" style={{ position: "absolute", left: "18px", top: "50%", transform: "translateY(-50%)" }} />
             <input
-              placeholder="Search services..."
+              placeholder="Search services, e.g. plumbing, cleaning..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ width: "100%", padding: "12px 16px 12px 44px", border: "1px solid #E2E8F0", borderRadius: "12px", fontSize: "15px", background: "#fff", color: "#0F172A", outline: "none", boxSizing: "border-box", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}
+              style={{ width: "100%", padding: "18px 20px 18px 52px", border: "none", borderRadius: "16px", fontSize: "16px", background: "rgba(255,255,255,0.95)", color: "#0F172A", outline: "none", boxSizing: "border-box", boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}
             />
+          </div>
+
+          {/* Stats row */}
+          <div style={{ display: "flex", gap: "32px", marginTop: "40px", flexWrap: "wrap" }}>
+            {[["500+", "Verified Providers"], ["2,000+", "Happy Customers"], ["4.8★", "Average Rating"]].map(([val, label]) => (
+              <div key={label}>
+                <div style={{ fontSize: "22px", fontWeight: 800, color: "#fff" }}>{val}</div>
+                <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)" }}>{label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px 24px" }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
 
         {/* Category Filters */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "28px" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", margin: "32px 0 28px", transform: "translateY(-20px)" }}>
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setCategory(cat.id)}
               style={{
-                padding: "8px 18px",
+                padding: "10px 20px",
                 borderRadius: "999px",
                 fontSize: "14px",
                 fontWeight: 600,
                 cursor: "pointer",
                 transition: "all 0.2s",
-                border: category === cat.id ? "none" : "1px solid #E2E8F0",
+                border: "none",
                 background: category === cat.id ? "linear-gradient(135deg, #3B82F6, #6366F1)" : "#fff",
-                color: category === cat.id ? "#fff" : "#64748B",
-                boxShadow: category === cat.id ? "0 4px 12px rgba(99,102,241,0.3)" : "none",
+                color: category === cat.id ? "#fff" : "#475569",
+                boxShadow: category === cat.id ? "0 4px 16px rgba(99,102,241,0.4)" : "0 2px 8px rgba(0,0,0,0.08)",
               }}
             >
               {cat.label}
@@ -86,74 +105,81 @@ export default function ServicesPage() {
 
         {/* Results */}
         {isLoading ? (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px", marginBottom: "48px" }}>
             {[...Array(6)].map((_, i) => (
-              <div key={i} style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", padding: "24px", animation: "pulse 1.5s infinite" }}>
-                <div style={{ height: "16px", background: "#F1F5F9", borderRadius: "6px", width: "75%", marginBottom: "12px" }} />
-                <div style={{ height: "12px", background: "#F1F5F9", borderRadius: "6px", width: "50%", marginBottom: "8px" }} />
-                <div style={{ height: "12px", background: "#F1F5F9", borderRadius: "6px", width: "100%" }} />
+              <div key={i} style={{ background: "#fff", borderRadius: "20px", border: "1px solid #E2E8F0", padding: "28px" }}>
+                <div style={{ height: "16px", background: "#F1F5F9", borderRadius: "6px", width: "40%", marginBottom: "16px" }} />
+                <div style={{ height: "20px", background: "#F1F5F9", borderRadius: "6px", width: "70%", marginBottom: "10px" }} />
+                <div style={{ height: "14px", background: "#F1F5F9", borderRadius: "6px", width: "100%", marginBottom: "6px" }} />
+                <div style={{ height: "14px", background: "#F1F5F9", borderRadius: "6px", width: "80%" }} />
               </div>
             ))}
           </div>
         ) : services.length === 0 ? (
           <div style={{ textAlign: "center", padding: "80px 0" }}>
-            <div style={{ width: "64px", height: "64px", background: "#F1F5F9", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
-              <Search size={28} color="#94A3B8" />
-            </div>
-            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A", marginBottom: "8px" }}>No services found</h3>
-            <p style={{ color: "#64748B" }}>Try adjusting your search or category filter</p>
+            <div style={{ fontSize: "48px", marginBottom: "16px" }}>🔍</div>
+            <h3 style={{ fontSize: "22px", fontWeight: 700, color: "#0F172A", marginBottom: "8px" }}>No services found</h3>
+            <p style={{ color: "#64748B" }}>Try adjusting your search or browse a different category</p>
           </div>
         ) : (
           <>
-            <p style={{ fontSize: "14px", color: "#94A3B8", marginBottom: "20px" }}>
-              {services.length} service{services.length !== 1 ? "s" : ""} found
+            <p style={{ fontSize: "14px", color: "#94A3B8", marginBottom: "20px", marginTop: "-8px" }}>
+              {services.length} service{services.length !== 1 ? "s" : ""} available
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "24px", marginBottom: "48px" }}>
               {services.map((service) => (
                 <button
                   key={service.id}
                   onClick={() => setLocation(`/provider/${service.providerId}`)}
-                  style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", padding: "24px", textAlign: "left", cursor: "pointer", transition: "all 0.2s", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}
-                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(0,0,0,0.1)"; e.currentTarget.style.borderColor = "#BFDBFE"; }}
-                  onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.04)"; e.currentTarget.style.borderColor = "#E2E8F0"; }}
+                  style={{ background: "#fff", borderRadius: "20px", border: "1px solid #E2E8F0", padding: "28px", textAlign: "left", cursor: "pointer", transition: "all 0.25s", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", position: "relative", overflow: "hidden" }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.12)"; e.currentTarget.style.borderColor = "#C7D2FE"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)"; e.currentTarget.style.borderColor = "#E2E8F0"; }}
                 >
-                  {/* Top row */}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                  {/* Decorative top accent */}
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "4px", background: "linear-gradient(135deg, #3B82F6, #6366F1)" }} />
+
+                  {/* Category badge + price */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
                     <span style={{
-                      padding: "4px 10px",
+                      padding: "5px 12px",
                       borderRadius: "999px",
                       fontSize: "12px",
-                      fontWeight: 600,
+                      fontWeight: 700,
                       background: CATEGORY_STYLE[service.category]?.bg ?? "#F1F5F9",
                       color: CATEGORY_STYLE[service.category]?.text ?? "#64748B",
                     }}>
-                      {service.category}
+                      {CATEGORY_STYLE[service.category]?.icon} {service.category}
                     </span>
-                    <span style={{ fontSize: "18px", fontWeight: 800, color: "#3B82F6" }}>
-                      ${service.price}
-                      <span style={{ fontSize: "12px", fontWeight: 400, color: "#94A3B8" }}>/{service.unit || "job"}</span>
-                    </span>
+                    <div style={{ textAlign: "right" }}>
+                      <span style={{ fontSize: "22px", fontWeight: 800, color: "#3B82F6" }}>${service.price}</span>
+                      <span style={{ fontSize: "12px", color: "#94A3B8" }}>/{service.unit || "job"}</span>
+                    </div>
                   </div>
 
                   {/* Service name */}
-                  <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#0F172A", margin: "0 0 6px" }}>
+                  <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A", margin: "0 0 8px", lineHeight: 1.3 }}>
                     {service.name}
                   </h3>
                   {service.description && (
-                    <p style={{ fontSize: "13px", color: "#64748B", margin: "0 0 16px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                    <p style={{ fontSize: "14px", color: "#64748B", margin: "0 0 20px", lineHeight: 1.6, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
                       {service.description}
                     </p>
                   )}
 
                   {/* Provider row */}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "14px", borderTop: "1px solid #F1F5F9" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <div style={{ width: "30px", height: "30px", borderRadius: "50%", background: "linear-gradient(135deg, #3B82F6, #6366F1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: 700, color: "#fff" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "16px", borderTop: "1px solid #F1F5F9" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ width: "34px", height: "34px", borderRadius: "50%", background: "linear-gradient(135deg, #3B82F6, #6366F1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 700, color: "#fff", flexShrink: 0 }}>
                         {service.providerName?.[0]?.toUpperCase() || "P"}
                       </div>
-                      <span style={{ fontSize: "13px", color: "#64748B", fontWeight: 500 }}>{service.providerName || "Provider"}</span>
+                      <div>
+                        <div style={{ fontSize: "14px", fontWeight: 600, color: "#0F172A" }}>{service.providerName || "Provider"}</div>
+                        <div style={{ fontSize: "12px", color: "#94A3B8" }}>Verified Provider ✓</div>
+                      </div>
                     </div>
-                    <ChevronRight size={16} color="#CBD5E1" />
+                    <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#F1F5F9", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <ChevronRight size={16} color="#64748B" />
+                    </div>
                   </div>
                 </button>
               ))}
