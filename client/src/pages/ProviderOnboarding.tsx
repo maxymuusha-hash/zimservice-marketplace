@@ -29,19 +29,17 @@ const labelStyle = {
 };
 
 const selectStyle = {
-  ...{
-    width: "100%",
-    padding: "12px 16px",
-    border: "2px solid #E2E8F0",
-    borderRadius: "10px",
-    fontSize: "15px",
-    outline: "none",
-    boxSizing: "border-box" as const,
-    fontFamily: "Inter, sans-serif",
-    background: "#FAFAFA",
-    color: "#0F172A",
-    appearance: "auto" as const,
-  }
+  width: "100%",
+  padding: "12px 16px",
+  border: "2px solid #E2E8F0",
+  borderRadius: "10px",
+  fontSize: "15px",
+  outline: "none",
+  boxSizing: "border-box" as const,
+  fontFamily: "Inter, sans-serif",
+  background: "#FAFAFA",
+  color: "#0F172A",
+  appearance: "auto" as const,
 };
 
 export default function ProviderOnboarding() {
@@ -132,8 +130,8 @@ export default function ProviderOnboarding() {
         unit: serviceUnit,
         pricingNotes: pricingNotes || undefined,
       });
-      toast.success("Service added!");
-      setLocation("/dashboard");
+      toast.success("Service added! Now activate your subscription.");
+      setLocation("/subscribe");
     } catch (e: any) {
       toast.error(e.message || "Failed to add service");
     }
@@ -298,7 +296,7 @@ export default function ProviderOnboarding() {
             </div>
             <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
               <button
-                onClick={() => setLocation("/dashboard")}
+                onClick={() => setLocation("/subscribe")}
                 style={{ flex: 1, padding: "14px", border: "1px solid #E2E8F0", borderRadius: "12px", background: "#fff", color: "#64748B", fontSize: "15px", fontWeight: 600, cursor: "pointer" }}
               >
                 Skip for now
@@ -308,7 +306,7 @@ export default function ProviderOnboarding() {
                 disabled={createService.isPending}
                 style={{ flex: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "14px", border: "none", borderRadius: "12px", background: createService.isPending ? "#94A3B8" : "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", fontSize: "15px", fontWeight: 700, cursor: createService.isPending ? "not-allowed" : "pointer", boxShadow: "0 4px 16px rgba(99,102,241,0.3)" }}
               >
-                {createService.isPending ? "Adding..." : <><span>Add Service & Go to Dashboard</span><ArrowRight size={16} /></>}
+                {createService.isPending ? "Adding..." : <><span>Add Service & Subscribe</span><ArrowRight size={16} /></>}
               </button>
             </div>
           </div>
