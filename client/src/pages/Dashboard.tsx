@@ -2,12 +2,10 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import Navbar from "@/components/Navbar";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   BookOpen,
   DollarSign,
@@ -19,19 +17,13 @@ import {
   XCircle,
   Calendar,
   MessageSquare,
+  Zap,
 } from "lucide-react";
 import { getLoginUrl } from "@/const";
 
-const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-700",
-  confirmed: "bg-blue-100 text-blue-700",
-  completed: "bg-green-100 text-green-700",
-  cancelled: "bg-red-100 text-red-700",
-};
-
 function StatCard({ icon: Icon, label, value, sub }: { icon: any; label: string; value: string | number; sub?: string }) {
   return (
-    <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", padding: "24px", transition: "box-shadow 0.2s" }}>
+    <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", padding: "24px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
         <div style={{ width: "40px", height: "40px", background: "#EEF2FF", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <Icon size={20} color="#4F46E5" />
@@ -51,12 +43,7 @@ function ReviewModal({ booking, onClose }: { booking: any; onClose: () => void }
 
   const handleSubmit = async () => {
     try {
-      await createReview.mutateAsync({
-        bookingId: booking.id,
-        providerId: booking.providerId,
-        rating,
-        comment,
-      });
+      await createReview.mutateAsync({ bookingId: booking.id, providerId: booking.providerId, rating, comment });
       toast.success("Review submitted!");
       onClose();
     } catch (e: any) {
@@ -65,7 +52,7 @@ function ReviewModal({ booking, onClose }: { booking: any; onClose: () => void }
   };
 
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }} onClick={onClose}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }} onClick={onClose}>
       <div style={{ background: "#fff", borderRadius: "20px", padding: "28px", maxWidth: "400px", width: "100%" }} onClick={(e) => e.stopPropagation()}>
         <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A", marginBottom: "4px" }}>Rate your experience</h3>
         <p style={{ fontSize: "14px", color: "#64748B", marginBottom: "20px" }}>{booking.serviceName} with {booking.providerName}</p>
@@ -110,31 +97,31 @@ function AddServiceModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }} onClick={onClose}>
+    <div style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }} onClick={onClose}>
       <div style={{ background: "#fff", borderRadius: "20px", padding: "28px", maxWidth: "480px", width: "100%" }} onClick={(e) => e.stopPropagation()}>
-        <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A", marginBottom: "20px" }}>Add New Service</h3>
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <h3 style={{ fontSize: "20px", fontWeight: 700, color: "#0F172A", marginBottom: "20px", fontFamily: "Playfair Display, serif" }}>Add New Service</h3>
+        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
           <Input placeholder="Service name" value={name} onChange={(e) => setName(e.target.value)} />
           <select value={category} onChange={(e) => setCategory(e.target.value)} style={{ width: "100%", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "10px 12px", fontSize: "14px", background: "#fff", color: "#0F172A" }}>
-            <option value="household chores">Household Chores</option>
-            <option value="repairs">Repairs</option>
-            <option value="personal care">Personal Care</option>
-            <option value="skilled trades">Skilled Trades</option>
+            <option value="household chores">🏠 Household Chores</option>
+            <option value="repairs">🔧 Repairs</option>
+            <option value="personal care">💆 Personal Care</option>
+            <option value="skilled trades">⚒️ Skilled Trades</option>
           </select>
           <Textarea placeholder="Description (optional)" value={desc} onChange={(e) => setDesc(e.target.value)} rows={2} />
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
             <Input type="number" placeholder="Price (USD)" value={price} onChange={(e) => setPrice(e.target.value)} />
             <select value={unit} onChange={(e) => setUnit(e.target.value)} style={{ border: "1px solid #E2E8F0", borderRadius: "8px", padding: "10px 12px", fontSize: "14px", background: "#fff", color: "#0F172A" }}>
               <option value="hour">per hour</option>
-              <option value="job">per job</option>
+              <option value="job">per job (fixed)</option>
               <option value="day">per day</option>
               <option value="visit">per visit</option>
             </select>
           </div>
         </div>
         <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
-          <button onClick={onClose} style={{ flex: 1, padding: "10px", border: "1px solid #E2E8F0", borderRadius: "10px", background: "#fff", cursor: "pointer", fontWeight: 600, color: "#64748B" }}>Cancel</button>
-          <button onClick={handleSubmit} disabled={createService.isPending} style={{ flex: 1, padding: "10px", border: "none", borderRadius: "10px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", cursor: "pointer", fontWeight: 600 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "12px", border: "1px solid #E2E8F0", borderRadius: "10px", background: "#fff", cursor: "pointer", fontWeight: 600, color: "#64748B" }}>Cancel</button>
+          <button onClick={handleSubmit} disabled={createService.isPending} style={{ flex: 1, padding: "12px", border: "none", borderRadius: "10px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", cursor: "pointer", fontWeight: 600 }}>
             {createService.isPending ? "Adding..." : "Add Service"}
           </button>
         </div>
@@ -157,7 +144,7 @@ export default function Dashboard() {
   const { data: providerJobs = [], refetch: refetchJobs } = trpc.bookings.providerJobs.useQuery(undefined, {
     enabled: isAuthenticated && !!user?.isProvider,
   });
-  const { data: myServices = [], refetch: refetchServices } = trpc.services.list.useQuery(
+  const { data: myServices = [] } = trpc.services.list.useQuery(
     { search: undefined },
     { enabled: isAuthenticated && !!user?.isProvider }
   );
@@ -171,8 +158,8 @@ export default function Dashboard() {
     return (
       <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#F8FAFC" }}>
         <Navbar />
-        <div style={{ maxWidth: "480px", margin: "80px auto", padding: "0 24px", textAlign: "center" }}>
-          <h2 style={{ fontSize: "28px", fontWeight: 800, color: "#0F172A", marginBottom: "16px", fontFamily: "Playfair Display, serif" }}>Sign in to view your dashboard</h2>
+        <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E1B4B 100%)", padding: "80px 24px", textAlign: "center" }}>
+          <h2 style={{ fontSize: "32px", fontWeight: 800, color: "#fff", marginBottom: "16px", fontFamily: "Playfair Display, serif" }}>Sign in to view your dashboard</h2>
           <button onClick={() => window.location.href = getLoginUrl()} style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 600, cursor: "pointer" }}>
             Sign In
           </button>
@@ -211,21 +198,29 @@ export default function Dashboard() {
       {reviewBooking && <ReviewModal booking={reviewBooking} onClose={() => setReviewBooking(null)} />}
       {showAddService && <AddServiceModal onClose={() => setShowAddService(false)} />}
 
-      {/* Hero Banner */}
-      <div style={{ background: "linear-gradient(135deg, #f0f7ff 0%, #ffffff 50%, #f5f0ff 100%)", borderBottom: "1px solid #E2E8F0", padding: "40px 0" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
+      {/* Dark Hero Banner */}
+      <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E1B4B 100%)", padding: "52px 0", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "-60px", right: "-60px", width: "300px", height: "300px", background: "radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)", borderRadius: "50%" }} />
+        <div style={{ position: "absolute", bottom: "-40px", left: "5%", width: "200px", height: "200px", background: "radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%)", borderRadius: "50%" }} />
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", position: "relative", zIndex: 1 }}>
           <div>
-            <div style={{ display: "inline-block", background: "#EEF2FF", color: "#4F46E5", padding: "4px 14px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "10px" }}>
-              {isProvider ? "⚙️ Provider Dashboard" : "👤 Customer Dashboard"}
+            <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(99,102,241,0.2)", color: "#A5B4FC", padding: "6px 16px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "14px", border: "1px solid rgba(99,102,241,0.3)" }}>
+              <Zap size={13} /> {isProvider ? "Provider Dashboard" : "Customer Dashboard"}
             </div>
-            <h1 style={{ fontSize: "36px", fontWeight: 800, color: "#0F172A", margin: 0, fontFamily: "Playfair Display, serif" }}>
-              Welcome, {user?.name?.split(" ")[0] || "there"}
+            <h1 style={{ fontSize: "42px", fontWeight: 800, color: "#fff", margin: "0 0 8px", fontFamily: "Playfair Display, serif", lineHeight: 1.15 }}>
+              Welcome back,{" "}
+              <span style={{ background: "linear-gradient(135deg, #60A5FA, #A78BFA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                {user?.name?.split(" ")[0] || "there"}
+              </span>
             </h1>
+            <p style={{ fontSize: "15px", color: "rgba(255,255,255,0.55)", margin: 0 }}>
+              {isProvider ? "Manage your services, bookings and earnings" : "Track your bookings and discover new services"}
+            </p>
           </div>
           {isProvider && (
             <button
               onClick={() => setShowAddService(true)}
-              style={{ display: "flex", alignItems: "center", gap: "8px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "12px", fontSize: "15px", fontWeight: 600, cursor: "pointer" }}
+              style={{ display: "flex", alignItems: "center", gap: "8px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "14px 24px", borderRadius: "12px", fontSize: "15px", fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 16px rgba(99,102,241,0.4)", flexShrink: 0 }}
             >
               <Plus size={16} /> Add Service
             </button>
@@ -240,9 +235,7 @@ export default function Dashboard() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "32px" }}>
           <StatCard icon={BookOpen} label="Total Bookings" value={stats?.totalBookings ?? 0} />
           <StatCard icon={DollarSign} label={isProvider ? "Total Earnings" : "Total Spent"} value={`$${stats?.totalEarnings?.toFixed(2) ?? "0.00"}`} />
-          {isProvider && (
-            <StatCard icon={Star} label="Avg Rating" value={stats?.avgRating ? `${stats.avgRating}/5` : "No reviews"} />
-          )}
+          {isProvider && <StatCard icon={Star} label="Avg Rating" value={stats?.avgRating ? `${stats.avgRating}/5` : "No reviews"} />}
           <StatCard icon={Clock} label="Pending" value={stats?.pendingJobs ?? 0} sub={isProvider ? "jobs awaiting confirmation" : "bookings pending"} />
         </div>
 
@@ -252,19 +245,7 @@ export default function Dashboard() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
-              style={{
-                padding: "10px 20px",
-                fontSize: "14px",
-                fontWeight: 600,
-                textTransform: "capitalize",
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-                borderBottom: activeTab === tab ? "2px solid #3B82F6" : "2px solid transparent",
-                color: activeTab === tab ? "#3B82F6" : "#64748B",
-                marginBottom: "-2px",
-                transition: "all 0.2s",
-              }}
+              style={{ padding: "10px 20px", fontSize: "14px", fontWeight: 600, textTransform: "capitalize", border: "none", background: "none", cursor: "pointer", borderBottom: activeTab === tab ? "2px solid #3B82F6" : "2px solid transparent", color: activeTab === tab ? "#3B82F6" : "#64748B", marginBottom: "-2px", transition: "all 0.2s" }}
             >
               {tab}
             </button>
@@ -293,7 +274,7 @@ export default function Dashboard() {
                   <div>
                     <p style={{ fontWeight: 600, color: "#0F172A", margin: "0 0 4px" }}>{job.serviceName}</p>
                     <p style={{ fontSize: "13px", color: "#64748B", margin: 0 }}>
-                      {isProvider ? `Customer: ${(job as any).customerName}` : `Provider: ${(job as any).providerName}`}
+                      {isProvider ? `Customer: ${job.customerName}` : `Provider: ${job.providerName}`}
                       {" · "}{new Date(job.bookingDate).toLocaleDateString()}
                     </p>
                   </div>
@@ -323,7 +304,7 @@ export default function Dashboard() {
                     <div style={{ flex: 1 }}>
                       <p style={{ fontWeight: 600, color: "#0F172A", margin: "0 0 4px" }}>{job.serviceName}</p>
                       <p style={{ fontSize: "13px", color: "#64748B", margin: "0 0 6px" }}>
-                        {isProvider ? `Customer: ${(job as any).customerName}` : `Provider: ${(job as any).providerName}`}
+                        {isProvider ? `Customer: ${job.customerName}` : `Provider: ${job.providerName}`}
                       </p>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "#94A3B8" }}>
                         <Calendar size={12} />
@@ -365,7 +346,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Tab: Services (provider only) */}
+        {/* Tab: Services */}
         {activeTab === "services" && isProvider && (
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
