@@ -1,62 +1,356 @@
-import { pgTable, pgEnum, text, timestamp, varchar, doublePrecision, boolean, serial, integer } from "drizzle-orm/pg-core";
+import { COOKIE_NAME } from "@shared/const";
+import { getSessionCookieOptions } from "./_core/cookies";
+import { systemRouter } from "./_core/systemRouter";
+import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { getDb } from "./db";
+import {
+  users,
+  services,
+  bookings,
+  reviews,
+  type InsertService,
+  type InsertBooking,
+  type InsertReview,
+} from "../drizzle/schema";
+import { eq, and, desc } from "drizzle-orm";
+import { z } from "zod";
 
-export const roleEnum = pgEnum("role", ["customer", "provider", "admin"]);
-export const categoryEnum = pgEnum("category", ["household chores", "repairs", "personal care", "skilled trades"]);
-export const statusEnum = pgEnum("status", ["pending", "confirmed", "completed", "cancelled"]);
+export const appRouter = router({
+  system: systemRouter,
+  auth: router({
+    me: publicProcedure.query((opts) => opts.ctx.user),
+    logout: publicProcedure.mutation(({ ctx }) => {
+      const cookieOptions = getSessionCookieOptions(ctx.req);
+      ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
+      return { success: true } as const;
+    }),
+  }),
 
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  openId: varchar("openId", { length: 64 }).notNull().unique(),
-  name: text("name"),
-  email: varchar("email", { length: 320 }),
-  loginMethod: varchar("loginMethod", { length: 64 }),
-  role: text("role").default("customer").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-  lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
-  isProvider: boolean("isProvider").default(false),
-  bio: text("bio"),
+  provider: router({
+    onboard: protectedProcedure
+      .input(
+        z.object({
+          bio: z.string().min(10).max(1000),
+          phone: z.string().optional(),
+          location: z.string().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        await db
+          .update(users)
+          .set({ isProvider: true, bio: input.bio, role: "provider" })
+          .where(eq(users.id, ctx.user.id));
+        return { success: true };
+      }),
+
+    list: publicProcedure
+      .input(
+        z.object({
+          category: z.string().optional(),
+          search: z.string().optional(),
+        }).nullish().transform(val => val ?? {})
+      )
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+        const providers = await db
+          .select()
+          .from(users)
+          .where(eq(users.isProvider, true));
+        return providers;
+      }),
+
+    get: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return null;
+        const [provider] = await db
+          .select()
+          .from(users)
+          .where(and(eq(users.id, input.id), eq(users.isProvider, true)))
+          .limit(1);
+        if (!provider) return null;
+        const providerServices = await db
+          .select()
+          .from(services)
+          .where(eq(services.providerId, input.id));
+        const providerReviews = await db
+          .select()
+          .from(reviews)
+          .where(eq(reviews.providerId, input.id))
+          .orderBy(desc(reviews.createdAt));
+        return { ...provider, services: providerServices, reviews: providerReviews };
+      }),
+  }),
+
+  services: router({
+    list: publicProcedure
+      .input(
+        z.object({
+          category: z
+            .enum(["household chores", "repairs", "personal care", "skilled trades"])
+            .optional(),
+          search: z.string().optional(),
+          minPrice: z.number().optional(),
+          maxPrice: z.number().optional(),
+        }).nullish().transform(val => val ?? {})
+      )
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+        const allServices = await db
+          .select({
+            id: services.id,
+            name: services.name,
+            description: services.description,
+            price: services.price,
+            unit: services.unit,
+            pricingNotes: services.pricingNotes,
+            category: services.category,
+            providerId: services.providerId,
+            providerName: users.name,
+            providerBio: users.bio,
+            createdAt: services.createdAt,
+          })
+          .from(services)
+          .innerJoin(users, eq(services.providerId, users.id));
+
+        return allServices.filter((s) => {
+          if (input.category && s.category !== input.category) return false;
+          if (input.minPrice && s.price < input.minPrice) return false;
+          if (input.maxPrice && s.price > input.maxPrice) return false;
+          if (
+            input.search &&
+            !s.name.toLowerCase().includes(input.search.toLowerCase()) &&
+            !s.description?.toLowerCase().includes(input.search.toLowerCase())
+          )
+            return false;
+          return true;
+        });
+      }),
+
+    create: protectedProcedure
+      .input(
+        z.object({
+          name: z.string().min(3).max(255),
+          description: z.string().optional(),
+          category: z.enum([
+            "household chores",
+            "repairs",
+            "personal care",
+            "skilled trades",
+          ]),
+          price: z.number().positive(),
+          unit: z.string().optional(),
+          pricingNotes: z.string().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        if (!ctx.user.isProvider) throw new Error("Only providers can create services");
+        await db.insert(services).values({
+          ...input,
+          providerId: ctx.user.id,
+        } as InsertService);
+        return { success: true };
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        await db
+          .delete(services)
+          .where(and(eq(services.id, input.id), eq(services.providerId, ctx.user.id)));
+        return { success: true };
+      }),
+  }),
+
+  bookings: router({
+    create: protectedProcedure
+      .input(
+        z.object({
+          serviceId: z.number(),
+          providerId: z.number(),
+          bookingDate: z.string(),
+          notes: z.string().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        const [service] = await db
+          .select()
+          .from(services)
+          .where(eq(services.id, input.serviceId))
+          .limit(1);
+        if (!service) throw new Error("Service not found");
+        await db.insert(bookings).values({
+          customerId: ctx.user.id,
+          providerId: input.providerId,
+          serviceId: input.serviceId,
+          bookingDate: new Date(input.bookingDate),
+          totalPrice: service.price,
+          status: "pending",
+        } as InsertBooking);
+        return { success: true };
+      }),
+
+    myBookings: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+      return db
+        .select({
+          id: bookings.id,
+          status: bookings.status,
+          bookingDate: bookings.bookingDate,
+          totalPrice: bookings.totalPrice,
+          createdAt: bookings.createdAt,
+          serviceName: services.name,
+          serviceCategory: services.category,
+          providerName: users.name,
+          providerId: bookings.providerId,
+          serviceId: bookings.serviceId,
+        })
+        .from(bookings)
+        .innerJoin(services, eq(bookings.serviceId, services.id))
+        .innerJoin(users, eq(bookings.providerId, users.id))
+        .where(eq(bookings.customerId, ctx.user.id))
+        .orderBy(desc(bookings.createdAt));
+    }),
+
+    providerJobs: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+      return db
+        .select({
+          id: bookings.id,
+          status: bookings.status,
+          bookingDate: bookings.bookingDate,
+          totalPrice: bookings.totalPrice,
+          createdAt: bookings.createdAt,
+          serviceName: services.name,
+          customerName: users.name,
+          customerId: bookings.customerId,
+          serviceId: bookings.serviceId,
+        })
+        .from(bookings)
+        .innerJoin(services, eq(bookings.serviceId, services.id))
+        .innerJoin(users, eq(bookings.customerId, users.id))
+        .where(eq(bookings.providerId, ctx.user.id))
+        .orderBy(desc(bookings.createdAt));
+    }),
+
+    updateStatus: protectedProcedure
+      .input(
+        z.object({
+          bookingId: z.number(),
+          status: z.enum(["confirmed", "completed", "cancelled"]),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        await db
+          .update(bookings)
+          .set({ status: input.status })
+          .where(
+            and(
+              eq(bookings.id, input.bookingId),
+              eq(bookings.providerId, ctx.user.id)
+            )
+          );
+        return { success: true };
+      }),
+  }),
+
+  reviews: router({
+    create: protectedProcedure
+      .input(
+        z.object({
+          bookingId: z.number(),
+          providerId: z.number(),
+          rating: z.number().int().min(1).max(5),
+          comment: z.string().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        await db.insert(reviews).values({
+          ...input,
+          customerId: ctx.user.id,
+        } as InsertReview);
+        return { success: true };
+      }),
+
+    forProvider: publicProcedure
+      .input(z.object({ providerId: z.number() }))
+      .query(async ({ input }) => {
+        const db = await getDb();
+        if (!db) return [];
+        return db
+          .select({
+            id: reviews.id,
+            rating: reviews.rating,
+            comment: reviews.comment,
+            createdAt: reviews.createdAt,
+            customerName: users.name,
+          })
+          .from(reviews)
+          .innerJoin(users, eq(reviews.customerId, users.id))
+          .where(eq(reviews.providerId, input.providerId))
+          .orderBy(desc(reviews.createdAt));
+      }),
+  }),
+
+  dashboard: router({
+    stats: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return { totalBookings: 0, totalEarnings: 0, avgRating: 0, pendingJobs: 0 };
+
+      if (ctx.user.isProvider) {
+        const allJobs = await db
+          .select()
+          .from(bookings)
+          .where(eq(bookings.providerId, ctx.user.id));
+        const completed = allJobs.filter((j) => j.status === "completed");
+        const pending = allJobs.filter((j) => j.status === "pending").length;
+        const earnings = completed.reduce((sum, j) => sum + (j.totalPrice || 0), 0);
+        const providerReviews = await db
+          .select()
+          .from(reviews)
+          .where(eq(reviews.providerId, ctx.user.id));
+        const avgRating =
+          providerReviews.length > 0
+            ? providerReviews.reduce((s, r) => s + r.rating, 0) / providerReviews.length
+            : 0;
+        return {
+          totalBookings: allJobs.length,
+          totalEarnings: earnings,
+          avgRating: Math.round(avgRating * 10) / 10,
+          pendingJobs: pending,
+        };
+      } else {
+        const myBookings = await db
+          .select()
+          .from(bookings)
+          .where(eq(bookings.customerId, ctx.user.id));
+        const totalSpent = myBookings.reduce((s, b) => s + (b.totalPrice || 0), 0);
+        return {
+          totalBookings: myBookings.length,
+          totalEarnings: totalSpent,
+          avgRating: 0,
+          pendingJobs: myBookings.filter((b) => b.status === "pending").length,
+        };
+      }
+    }),
+  }),
 });
 
-export const services = pgTable("services", {
-  id: serial("id").primaryKey(),
-  providerId: integer("providerId").notNull().references(() => users.id),
-  category: text("category").notNull(),
-  name: varchar("name", { length: 255 }).notNull(),
-  description: text("description"),
-  price: doublePrecision("price").notNull(),
-  unit: varchar("unit", { length: 50 }),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-});
-
-export const bookings = pgTable("bookings", {
-  id: serial("id").primaryKey(),
-  customerId: integer("customerId").notNull().references(() => users.id),
-  providerId: integer("providerId").notNull().references(() => users.id),
-  serviceId: integer("serviceId").notNull().references(() => services.id),
-  bookingDate: timestamp("bookingDate").notNull(),
-  status: text("status").default("pending").notNull(),
-  totalPrice: doublePrecision("totalPrice").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
-});
-
-export const reviews = pgTable("reviews", {
-  id: serial("id").primaryKey(),
-  bookingId: integer("bookingId").notNull().references(() => bookings.id),
-  customerId: integer("customerId").notNull().references(() => users.id),
-  providerId: integer("providerId").notNull().references(() => reviews.id),
-  rating: integer("rating").notNull(),
-  comment: text("comment"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
-
-export type User = typeof users.$inferSelect;
-export type InsertUser = typeof users.$inferInsert;
-export type Service = typeof services.$inferSelect;
-export type InsertService = typeof services.$inferInsert;
-export type Booking = typeof bookings.$inferSelect;
-export type InsertBooking = typeof bookings.$inferInsert;
-export type Review = typeof reviews.$inferSelect;
-export type InsertReview = typeof reviews.$inferInsert;
+export type AppRouter = typeof appRouter;
