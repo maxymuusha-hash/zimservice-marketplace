@@ -68,12 +68,8 @@ function BookingModal({
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }} onClick={onClose}>
       <div style={{ background: "#fff", borderRadius: "20px", padding: "28px", maxWidth: "440px", width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }} onClick={(e) => e.stopPropagation()}>
-        
-        {/* Header */}
         <h3 style={{ fontSize: "20px", fontWeight: 800, color: "#0F172A", margin: "0 0 4px", fontFamily: "Playfair Display, serif" }}>Book Service</h3>
         <p style={{ fontSize: "14px", color: "#64748B", margin: "0 0 20px" }}>{service.name}</p>
-
-        {/* Price */}
         <div style={{ background: "#F0F9FF", border: "1px solid #BAE6FD", borderRadius: "12px", padding: "14px 16px", marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{ fontSize: "14px", color: "#64748B" }}>Total Price</span>
           <span style={{ fontSize: "22px", fontWeight: 800, color: "#3B82F6" }}>
@@ -81,35 +77,19 @@ function BookingModal({
             <span style={{ fontSize: "13px", fontWeight: 400, color: "#94A3B8" }}>/{service.unit || "job"}</span>
           </span>
         </div>
-
-        {/* Date & Time */}
         <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginBottom: "16px" }}>
           <div>
             <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "8px" }}>📅 Date</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              min={new Date().toISOString().split("T")[0]}
-              style={inputStyle}
-            />
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} min={new Date().toISOString().split("T")[0]} style={inputStyle} />
           </div>
           <div>
             <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "8px" }}>🕐 Time</label>
-            <input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              style={inputStyle}
-            />
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} style={inputStyle} />
           </div>
         </div>
-
         <p style={{ fontSize: "12px", color: "#94A3B8", marginBottom: "20px" }}>
           💳 Payment via Paynow will be collected at time of service completion.
         </p>
-
-        {/* Buttons */}
         <div style={{ display: "flex", gap: "12px" }}>
           <button onClick={onClose} style={{ flex: 1, padding: "12px", border: "1px solid #E2E8F0", borderRadius: "10px", background: "#fff", cursor: "pointer", fontWeight: 600, color: "#64748B", fontSize: "15px" }}>
             Cancel
@@ -222,12 +202,30 @@ export default function ProviderProfile() {
                   <div key={service.id} style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", padding: "24px", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}>
                     <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
                       <div style={{ flex: 1 }}>
+                        {/* Category badge */}
                         <span style={{ padding: "4px 10px", borderRadius: "999px", fontSize: "12px", fontWeight: 700, background: CATEGORY_STYLE[service.category]?.bg ?? "#F1F5F9", color: CATEGORY_STYLE[service.category]?.text ?? "#64748B", display: "inline-block", marginBottom: "10px" }}>
                           {CATEGORY_STYLE[service.category]?.icon} {service.category}
                         </span>
+
+                        {/* Service name */}
                         <h3 style={{ fontSize: "17px", fontWeight: 700, color: "#0F172A", margin: "0 0 6px" }}>{service.name}</h3>
-                        {service.description && <p style={{ fontSize: "14px", color: "#64748B", margin: 0, lineHeight: 1.6 }}>{service.description}</p>}
+
+                        {/* Description */}
+                        {service.description && (
+                          <p style={{ fontSize: "14px", color: "#64748B", margin: "0 0 8px", lineHeight: 1.6 }}>
+                            {service.description}
+                          </p>
+                        )}
+
+                        {/* Pricing notes */}
+                        {(service as any).pricingNotes && (
+                          <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#EEF2FF", color: "#4F46E5", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: 500, marginTop: "4px" }}>
+                            💡 {(service as any).pricingNotes}
+                          </div>
+                        )}
                       </div>
+
+                      {/* Price + Book */}
                       <div style={{ display: "flex", alignItems: "center", gap: "16px", flexShrink: 0 }}>
                         <div style={{ textAlign: "right" }}>
                           <p style={{ fontSize: "22px", fontWeight: 800, color: "#3B82F6", margin: 0 }}>${service.price}</p>
@@ -263,7 +261,9 @@ export default function ProviderProfile() {
                       <StarRating rating={review.rating} />
                       <span style={{ fontSize: "13px", color: "#64748B", fontWeight: 500 }}>{review.customerName}</span>
                     </div>
-                    {review.comment && <p style={{ fontSize: "14px", color: "#475569", margin: 0, lineHeight: 1.6 }}>{review.comment}</p>}
+                    {review.comment && (
+                      <p style={{ fontSize: "14px", color: "#475569", margin: 0, lineHeight: 1.6 }}>{review.comment}</p>
+                    )}
                   </div>
                 ))}
               </div>
