@@ -1,25 +1,22 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import Navbar from "@/components/Navbar";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
-import { Search, Star, DollarSign, Briefcase, Home as HomeIcon, Heart, Wrench, ChevronRight } from "lucide-react";
+import { Search, Briefcase, Home as HomeIcon, Heart, Wrench, ChevronRight } from "lucide-react";
 
 const CATEGORIES = [
   { id: "all", label: "All Services" },
-  { id: "household chores", label: "Household Chores", icon: HomeIcon, color: "bg-blue-100 text-blue-700" },
-  { id: "repairs", label: "Repairs", icon: Wrench, color: "bg-orange-100 text-orange-700" },
-  { id: "personal care", label: "Personal Care", icon: Heart, color: "bg-pink-100 text-pink-700" },
-  { id: "skilled trades", label: "Skilled Trades", icon: Briefcase, color: "bg-amber-100 text-amber-700" },
+  { id: "household chores", label: "Household Chores", bg: "#3B82F6", light: "#EFF6FF", textColor: "#1D4ED8" },
+  { id: "repairs", label: "Repairs", bg: "#F97316", light: "#FFF7ED", textColor: "#C2410C" },
+  { id: "personal care", label: "Personal Care", bg: "#EC4899", light: "#FDF2F8", textColor: "#BE185D" },
+  { id: "skilled trades", label: "Skilled Trades", bg: "#F59E0B", light: "#FFFBEB", textColor: "#B45309" },
 ] as const;
 
-const CATEGORY_COLORS: Record<string, string> = {
-  "household chores": "bg-blue-100 text-blue-700",
-  "repairs": "bg-orange-100 text-orange-700",
-  "personal care": "bg-pink-100 text-pink-700",
-  "skilled trades": "bg-amber-100 text-amber-700",
+const CATEGORY_STYLE: Record<string, { bg: string; text: string }> = {
+  "household chores": { bg: "#EFF6FF", text: "#1D4ED8" },
+  "repairs": { bg: "#FFF7ED", text: "#C2410C" },
+  "personal care": { bg: "#FDF2F8", text: "#BE185D" },
+  "skilled trades": { bg: "#FFFBEB", text: "#B45309" },
 };
 
 export default function ServicesPage() {
@@ -32,50 +29,55 @@ export default function ServicesPage() {
     search: search || undefined,
   });
 
-  // Group services by provider
-  const providerMap = new Map<number, { name: string | null; bio: string | null; services: typeof services }>();
-  services.forEach((s) => {
-    if (!providerMap.has(s.providerId)) {
-      providerMap.set(s.providerId, { name: s.providerName, bio: s.providerBio, services: [] });
-    }
-    providerMap.get(s.providerId)!.services.push(s);
-  });
-  const providers = Array.from(providerMap.entries());
-
   return (
-    <div className="min-h-screen bg-background">
+    <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#F8FAFC" }}>
       <Navbar />
 
-      {/* Header */}
-      <div className="bg-gradient-to-br from-accent/10 to-background border-b border-border py-12">
-        <div className="container">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Find Local Services</h1>
-          <p className="text-muted-foreground mb-6">Browse vetted providers near you</p>
+      {/* Hero Banner */}
+      <div style={{ background: "linear-gradient(135deg, #f0f7ff 0%, #ffffff 50%, #f5f0ff 100%)", borderBottom: "1px solid #E2E8F0", padding: "48px 0" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
+          <div style={{ display: "inline-block", background: "#EEF2FF", color: "#4F46E5", padding: "4px 14px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "12px" }}>
+            🔍 Browse Services
+          </div>
+          <h1 style={{ fontSize: "40px", fontWeight: 800, color: "#0F172A", margin: "0 0 8px", fontFamily: "Playfair Display, serif" }}>
+            Find Local Services
+          </h1>
+          <p style={{ fontSize: "16px", color: "#64748B", margin: "0 0 24px" }}>Browse vetted providers near you</p>
 
-          <div className="relative max-w-lg">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
+          {/* Search */}
+          <div style={{ position: "relative", maxWidth: "520px" }}>
+            <Search size={18} color="#94A3B8" style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)" }} />
+            <input
               placeholder="Search services..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10"
+              style={{ width: "100%", padding: "12px 16px 12px 44px", border: "1px solid #E2E8F0", borderRadius: "12px", fontSize: "15px", background: "#fff", color: "#0F172A", outline: "none", boxSizing: "border-box", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}
             />
           </div>
         </div>
       </div>
 
-      <div className="container py-8">
+      {/* Main Content */}
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px 24px" }}>
+
         {/* Category Filters */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "28px" }}>
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${
-                category === cat.id
-                  ? "bg-accent text-white border-accent"
-                  : "bg-card text-muted-foreground border-border hover:border-accent hover:text-accent"
-              }`}
+              style={{
+                padding: "8px 18px",
+                borderRadius: "999px",
+                fontSize: "14px",
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "all 0.2s",
+                border: category === cat.id ? "none" : "1px solid #E2E8F0",
+                background: category === cat.id ? "linear-gradient(135deg, #3B82F6, #6366F1)" : "#fff",
+                color: category === cat.id ? "#fff" : "#64748B",
+                boxShadow: category === cat.id ? "0 4px 12px rgba(99,102,241,0.3)" : "none",
+              }}
             >
               {cat.label}
             </button>
@@ -84,57 +86,74 @@ export default function ServicesPage() {
 
         {/* Results */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="card-elegant animate-pulse">
-                <div className="h-4 bg-muted rounded w-3/4 mb-3" />
-                <div className="h-3 bg-muted rounded w-1/2 mb-2" />
-                <div className="h-3 bg-muted rounded w-full" />
+              <div key={i} style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", padding: "24px", animation: "pulse 1.5s infinite" }}>
+                <div style={{ height: "16px", background: "#F1F5F9", borderRadius: "6px", width: "75%", marginBottom: "12px" }} />
+                <div style={{ height: "12px", background: "#F1F5F9", borderRadius: "6px", width: "50%", marginBottom: "8px" }} />
+                <div style={{ height: "12px", background: "#F1F5F9", borderRadius: "6px", width: "100%" }} />
               </div>
             ))}
           </div>
         ) : services.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-8 h-8 text-muted-foreground" />
+          <div style={{ textAlign: "center", padding: "80px 0" }}>
+            <div style={{ width: "64px", height: "64px", background: "#F1F5F9", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+              <Search size={28} color="#94A3B8" />
             </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">No services found</h3>
-            <p className="text-muted-foreground">Try adjusting your search or category filter</p>
+            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A", marginBottom: "8px" }}>No services found</h3>
+            <p style={{ color: "#64748B" }}>Try adjusting your search or category filter</p>
           </div>
         ) : (
           <>
-            <p className="text-sm text-muted-foreground mb-4">{services.length} service{services.length !== 1 ? "s" : ""} found</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p style={{ fontSize: "14px", color: "#94A3B8", marginBottom: "20px" }}>
+              {services.length} service{services.length !== 1 ? "s" : ""} found
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
               {services.map((service) => (
                 <button
                   key={service.id}
                   onClick={() => setLocation(`/provider/${service.providerId}`)}
-                  className="card-elegant text-left group hover:shadow-lg hover:border-accent/30 transition-all"
+                  style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", padding: "24px", textAlign: "left", cursor: "pointer", transition: "all 0.2s", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(0,0,0,0.1)"; e.currentTarget.style.borderColor = "#BFDBFE"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.04)"; e.currentTarget.style.borderColor = "#E2E8F0"; }}
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <Badge className={`text-xs ${CATEGORY_COLORS[service.category] || ""}`}>
+                  {/* Top row */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+                    <span style={{
+                      padding: "4px 10px",
+                      borderRadius: "999px",
+                      fontSize: "12px",
+                      fontWeight: 600,
+                      background: CATEGORY_STYLE[service.category]?.bg ?? "#F1F5F9",
+                      color: CATEGORY_STYLE[service.category]?.text ?? "#64748B",
+                    }}>
                       {service.category}
-                    </Badge>
-                    <span className="text-lg font-bold text-accent">
-                      ${service.price}<span className="text-xs font-normal text-muted-foreground">/{service.unit || "job"}</span>
+                    </span>
+                    <span style={{ fontSize: "18px", fontWeight: 800, color: "#3B82F6" }}>
+                      ${service.price}
+                      <span style={{ fontSize: "12px", fontWeight: 400, color: "#94A3B8" }}>/{service.unit || "job"}</span>
                     </span>
                   </div>
 
-                  <h3 className="font-semibold text-foreground mb-1 group-hover:text-accent transition-colors">
+                  {/* Service name */}
+                  <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#0F172A", margin: "0 0 6px" }}>
                     {service.name}
                   </h3>
                   {service.description && (
-                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{service.description}</p>
+                    <p style={{ fontSize: "13px", color: "#64748B", margin: "0 0 16px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                      {service.description}
+                    </p>
                   )}
 
-                  <div className="flex items-center justify-between pt-3 border-t border-border">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-accent/15 flex items-center justify-center text-xs font-bold text-accent">
+                  {/* Provider row */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "14px", borderTop: "1px solid #F1F5F9" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <div style={{ width: "30px", height: "30px", borderRadius: "50%", background: "linear-gradient(135deg, #3B82F6, #6366F1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px", fontWeight: 700, color: "#fff" }}>
                         {service.providerName?.[0]?.toUpperCase() || "P"}
                       </div>
-                      <span className="text-sm text-muted-foreground">{service.providerName || "Provider"}</span>
+                      <span style={{ fontSize: "13px", color: "#64748B", fontWeight: 500 }}>{service.providerName || "Provider"}</span>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-accent transition-colors" />
+                    <ChevronRight size={16} color="#CBD5E1" />
                   </div>
                 </button>
               ))}
