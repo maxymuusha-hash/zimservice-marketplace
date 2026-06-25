@@ -81,13 +81,21 @@ function AddServiceModal({ onClose }: { onClose: () => void }) {
   const [category, setCategory] = useState("household chores");
   const [price, setPrice] = useState("");
   const [unit, setUnit] = useState("hour");
+  const [pricingNotes, setPricingNotes] = useState("");
   const createService = trpc.services.create.useMutation();
   const utils = trpc.useUtils();
 
   const handleSubmit = async () => {
     if (!name || !price) { toast.error("Name and price required"); return; }
     try {
-      await createService.mutateAsync({ name, description: desc, category: category as any, price: parseFloat(price), unit });
+      await createService.mutateAsync({
+        name,
+        description: desc,
+        category: category as any,
+        price: parseFloat(price),
+        unit,
+        pricingNotes: pricingNotes || undefined,
+      });
       await utils.services.list.invalidate();
       toast.success("Service added!");
       onClose();
@@ -98,25 +106,57 @@ function AddServiceModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }} onClick={onClose}>
-      <div style={{ background: "#fff", borderRadius: "20px", padding: "28px", maxWidth: "480px", width: "100%" }} onClick={(e) => e.stopPropagation()}>
+      <div style={{ background: "#fff", borderRadius: "20px", padding: "28px", maxWidth: "480px", width: "100%", maxHeight: "90vh", overflowY: "auto" }} onClick={(e) => e.stopPropagation()}>
         <h3 style={{ fontSize: "20px", fontWeight: 700, color: "#0F172A", marginBottom: "20px", fontFamily: "Playfair Display, serif" }}>Add New Service</h3>
         <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-          <Input placeholder="Service name" value={name} onChange={(e) => setName(e.target.value)} />
-          <select value={category} onChange={(e) => setCategory(e.target.value)} style={{ width: "100%", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "10px 12px", fontSize: "14px", background: "#fff", color: "#0F172A" }}>
-            <option value="household chores">🏠 Household Chores</option>
-            <option value="repairs">🔧 Repairs</option>
-            <option value="personal care">💆 Personal Care</option>
-            <option value="skilled trades">⚒️ Skilled Trades</option>
-          </select>
-          <Textarea placeholder="Description (optional)" value={desc} onChange={(e) => setDesc(e.target.value)} rows={2} />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-            <Input type="number" placeholder="Price (USD)" value={price} onChange={(e) => setPrice(e.target.value)} />
-            <select value={unit} onChange={(e) => setUnit(e.target.value)} style={{ border: "1px solid #E2E8F0", borderRadius: "8px", padding: "10px 12px", fontSize: "14px", background: "#fff", color: "#0F172A" }}>
-              <option value="hour">per hour</option>
-              <option value="job">per job (fixed)</option>
-              <option value="day">per day</option>
-              <option value="visit">per visit</option>
+          <div>
+            <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "6px" }}>Service Name *</label>
+            <Input placeholder="e.g. House Cleaning, Solar Installation..." value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div>
+            <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "6px" }}>Category *</label>
+            <select value={category} onChange={(e) => setCategory(e.target.value)} style={{ width: "100%", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "10px 12px", fontSize: "14px", background: "#fff", color: "#0F172A" }}>
+              <option value="household chores">🏠 Household Chores</option>
+              <option value="repairs">🔧 Repairs</option>
+              <option value="personal care">💆 Personal Care</option>
+              <option value="skilled trades">⚒️ Skilled Trades</option>
             </select>
+          </div>
+          <div>
+            <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "6px" }}>Description</label>
+            <Textarea placeholder="Describe what's included in this service..." value={desc} onChange={(e) => setDesc(e.target.value)} rows={2} />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+            <div>
+              <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "6px" }}>Price (USD) *</label>
+              <Input type="number" placeholder="25" value={price} onChange={(e) => setPrice(e.target.value)} />
+            </div>
+            <div>
+              <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "6px" }}>Pricing Unit</label>
+              <select value={unit} onChange={(e) => setUnit(e.target.value)} style={{ width: "100%", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "10px 12px", fontSize: "14px", background: "#fff", color: "#0F172A" }}>
+                <option value="hour">per hour</option>
+                <option value="job">per job (fixed)</option>
+                <option value="day">per day</option>
+                <option value="visit">per visit</option>
+                <option value="unit">per unit</option>
+                <option value="m2">per m²</option>
+                <option value="kW">per kW</option>
+                <option value="kg">per kg</option>
+                <option value="trip">per trip</option>
+                <option value="quote">quote/negotiable</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "6px" }}>
+              Pricing Notes <span style={{ fontWeight: 400, color: "#94A3B8" }}>(optional)</span>
+            </label>
+            <Input
+              placeholder='e.g. "Price includes materials", "Site visit required", "Min. 4 panels"'
+              value={pricingNotes}
+              onChange={(e) => setPricingNotes(e.target.value)}
+            />
+            <p style={{ fontSize: "12px", color: "#94A3B8", marginTop: "4px" }}>Help customers understand your pricing structure</p>
           </div>
         </div>
         <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
@@ -366,6 +406,7 @@ export default function Dashboard() {
                     <p style={{ fontWeight: 600, color: "#0F172A", margin: "0 0 4px" }}>{service.name}</p>
                     <p style={{ fontSize: "13px", color: "#64748B", margin: 0, textTransform: "capitalize" }}>{service.category}</p>
                     {service.description && <p style={{ fontSize: "12px", color: "#94A3B8", margin: "4px 0 0", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical" }}>{service.description}</p>}
+                    {(service as any).pricingNotes && <p style={{ fontSize: "12px", color: "#6366F1", margin: "4px 0 0", fontStyle: "italic" }}>💡 {(service as any).pricingNotes}</p>}
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
                     <div style={{ textAlign: "right" }}>
