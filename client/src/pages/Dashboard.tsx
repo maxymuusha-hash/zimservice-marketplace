@@ -31,15 +31,15 @@ const STATUS_COLORS: Record<string, string> = {
 
 function StatCard({ icon: Icon, label, value, sub }: { icon: any; label: string; value: string | number; sub?: string }) {
   return (
-    <div className="card-elegant">
-      <div className="flex items-center gap-3 mb-3">
-        <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-          <Icon className="w-5 h-5 text-accent" />
+    <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", padding: "24px", transition: "box-shadow 0.2s" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
+        <div style={{ width: "40px", height: "40px", background: "#EEF2FF", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Icon size={20} color="#4F46E5" />
         </div>
-        <p className="text-sm text-muted-foreground">{label}</p>
+        <p style={{ fontSize: "14px", color: "#64748B", margin: 0 }}>{label}</p>
       </div>
-      <p className="text-2xl font-bold text-foreground">{value}</p>
-      {sub && <p className="text-xs text-muted-foreground mt-1">{sub}</p>}
+      <p style={{ fontSize: "28px", fontWeight: 800, color: "#0F172A", margin: 0 }}>{value}</p>
+      {sub && <p style={{ fontSize: "12px", color: "#94A3B8", marginTop: "4px" }}>{sub}</p>}
     </div>
   );
 }
@@ -65,32 +65,23 @@ function ReviewModal({ booking, onClose }: { booking: any; onClose: () => void }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-card rounded-2xl p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
-        <h3 className="text-lg font-bold text-foreground mb-1">Rate your experience</h3>
-        <p className="text-sm text-muted-foreground mb-4">{booking.serviceName} with {booking.providerName}</p>
-
-        <div className="flex gap-1 mb-4">
+    <div style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }} onClick={onClose}>
+      <div style={{ background: "#fff", borderRadius: "20px", padding: "28px", maxWidth: "400px", width: "100%" }} onClick={(e) => e.stopPropagation()}>
+        <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A", marginBottom: "4px" }}>Rate your experience</h3>
+        <p style={{ fontSize: "14px", color: "#64748B", marginBottom: "20px" }}>{booking.serviceName} with {booking.providerName}</p>
+        <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
           {[1, 2, 3, 4, 5].map((s) => (
-            <button key={s} onClick={() => setRating(s)}>
-              <Star className={`w-8 h-8 transition-colors ${s <= rating ? "fill-yellow-400 text-yellow-400" : "text-muted"}`} />
+            <button key={s} onClick={() => setRating(s)} style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}>
+              <Star size={32} fill={s <= rating ? "#FBBF24" : "none"} color={s <= rating ? "#FBBF24" : "#CBD5E1"} />
             </button>
           ))}
         </div>
-
-        <Textarea
-          placeholder="Share your experience (optional)"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          rows={3}
-          className="mb-4"
-        />
-
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={onClose} className="flex-1">Cancel</Button>
-          <Button onClick={handleSubmit} disabled={createReview.isPending} className="flex-1 btn-primary">
+        <Textarea placeholder="Share your experience (optional)" value={comment} onChange={(e) => setComment(e.target.value)} rows={3} style={{ marginBottom: "16px" }} />
+        <div style={{ display: "flex", gap: "12px" }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "10px", border: "1px solid #E2E8F0", borderRadius: "10px", background: "#fff", cursor: "pointer", fontWeight: 600, color: "#64748B" }}>Cancel</button>
+          <button onClick={handleSubmit} disabled={createReview.isPending} style={{ flex: 1, padding: "10px", border: "none", borderRadius: "10px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", cursor: "pointer", fontWeight: 600 }}>
             {createReview.isPending ? "Submitting..." : "Submit Review"}
-          </Button>
+          </button>
         </div>
       </div>
     </div>
@@ -119,21 +110,21 @@ function AddServiceModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-card rounded-2xl p-6 max-w-md w-full" onClick={(e) => e.stopPropagation()}>
-        <h3 className="text-lg font-bold text-foreground mb-4">Add New Service</h3>
-        <div className="space-y-3">
+    <div style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }} onClick={onClose}>
+      <div style={{ background: "#fff", borderRadius: "20px", padding: "28px", maxWidth: "480px", width: "100%" }} onClick={(e) => e.stopPropagation()}>
+        <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A", marginBottom: "20px" }}>Add New Service</h3>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           <Input placeholder="Service name" value={name} onChange={(e) => setName(e.target.value)} />
-          <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background text-foreground">
+          <select value={category} onChange={(e) => setCategory(e.target.value)} style={{ width: "100%", border: "1px solid #E2E8F0", borderRadius: "8px", padding: "10px 12px", fontSize: "14px", background: "#fff", color: "#0F172A" }}>
             <option value="household chores">Household Chores</option>
             <option value="repairs">Repairs</option>
             <option value="personal care">Personal Care</option>
             <option value="skilled trades">Skilled Trades</option>
           </select>
           <Textarea placeholder="Description (optional)" value={desc} onChange={(e) => setDesc(e.target.value)} rows={2} />
-          <div className="grid grid-cols-2 gap-2">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
             <Input type="number" placeholder="Price (USD)" value={price} onChange={(e) => setPrice(e.target.value)} />
-            <select value={unit} onChange={(e) => setUnit(e.target.value)} className="border border-border rounded-md px-3 py-2 text-sm bg-background text-foreground">
+            <select value={unit} onChange={(e) => setUnit(e.target.value)} style={{ border: "1px solid #E2E8F0", borderRadius: "8px", padding: "10px 12px", fontSize: "14px", background: "#fff", color: "#0F172A" }}>
               <option value="hour">per hour</option>
               <option value="job">per job</option>
               <option value="day">per day</option>
@@ -141,11 +132,11 @@ function AddServiceModal({ onClose }: { onClose: () => void }) {
             </select>
           </div>
         </div>
-        <div className="flex gap-3 mt-4">
-          <Button variant="outline" onClick={onClose} className="flex-1">Cancel</Button>
-          <Button onClick={handleSubmit} disabled={createService.isPending} className="flex-1 btn-primary">
+        <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
+          <button onClick={onClose} style={{ flex: 1, padding: "10px", border: "1px solid #E2E8F0", borderRadius: "10px", background: "#fff", cursor: "pointer", fontWeight: 600, color: "#64748B" }}>Cancel</button>
+          <button onClick={handleSubmit} disabled={createService.isPending} style={{ flex: 1, padding: "10px", border: "none", borderRadius: "10px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", cursor: "pointer", fontWeight: 600 }}>
             {createService.isPending ? "Adding..." : "Add Service"}
-          </Button>
+          </button>
         </div>
       </div>
     </div>
@@ -178,11 +169,13 @@ export default function Dashboard() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-background">
+      <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#F8FAFC" }}>
         <Navbar />
-        <div className="container py-20 text-center max-w-md mx-auto">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Sign in to view your dashboard</h2>
-          <Button asChild className="btn-primary"><a href={getLoginUrl()}>Sign In</a></Button>
+        <div style={{ maxWidth: "480px", margin: "80px auto", padding: "0 24px", textAlign: "center" }}>
+          <h2 style={{ fontSize: "28px", fontWeight: 800, color: "#0F172A", marginBottom: "16px", fontFamily: "Playfair Display, serif" }}>Sign in to view your dashboard</h2>
+          <button onClick={() => window.location.href = getLoginUrl()} style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 600, cursor: "pointer" }}>
+            Sign In
+          </button>
         </div>
       </div>
     );
@@ -212,65 +205,66 @@ export default function Dashboard() {
   const jobs = isProvider ? providerJobs : myBookings;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#F8FAFC" }}>
       <Navbar />
+
       {reviewBooking && <ReviewModal booking={reviewBooking} onClose={() => setReviewBooking(null)} />}
       {showAddService && <AddServiceModal onClose={() => setShowAddService(false)} />}
 
-      <div className="container py-8 max-w-5xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+      {/* Hero Banner */}
+      <div style={{ background: "linear-gradient(135deg, #f0f7ff 0%, #ffffff 50%, #f5f0ff 100%)", borderBottom: "1px solid #E2E8F0", padding: "40px 0" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Welcome, {user?.name?.split(" ")[0] || "there"}</h1>
-            <p className="text-muted-foreground text-sm">
-              {isProvider ? "Provider Dashboard" : "Customer Dashboard"}
-            </p>
+            <div style={{ display: "inline-block", background: "#EEF2FF", color: "#4F46E5", padding: "4px 14px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "10px" }}>
+              {isProvider ? "⚙️ Provider Dashboard" : "👤 Customer Dashboard"}
+            </div>
+            <h1 style={{ fontSize: "36px", fontWeight: 800, color: "#0F172A", margin: 0, fontFamily: "Playfair Display, serif" }}>
+              Welcome, {user?.name?.split(" ")[0] || "there"}
+            </h1>
           </div>
           {isProvider && (
-            <Button onClick={() => setShowAddService(true)} className="btn-primary flex items-center gap-2">
-              <Plus className="w-4 h-4" /> Add Service
-            </Button>
+            <button
+              onClick={() => setShowAddService(true)}
+              style={{ display: "flex", alignItems: "center", gap: "8px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "12px", fontSize: "15px", fontWeight: 600, cursor: "pointer" }}
+            >
+              <Plus size={16} /> Add Service
+            </button>
           )}
         </div>
+      </div>
+
+      {/* Main Content */}
+      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px 24px" }}>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard
-            icon={BookOpen}
-            label="Total Bookings"
-            value={stats?.totalBookings ?? 0}
-          />
-          <StatCard
-            icon={DollarSign}
-            label={isProvider ? "Total Earnings" : "Total Spent"}
-            value={`$${stats?.totalEarnings?.toFixed(2) ?? "0.00"}`}
-          />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "32px" }}>
+          <StatCard icon={BookOpen} label="Total Bookings" value={stats?.totalBookings ?? 0} />
+          <StatCard icon={DollarSign} label={isProvider ? "Total Earnings" : "Total Spent"} value={`$${stats?.totalEarnings?.toFixed(2) ?? "0.00"}`} />
           {isProvider && (
-            <StatCard
-              icon={Star}
-              label="Avg Rating"
-              value={stats?.avgRating ? `${stats.avgRating}/5` : "No reviews"}
-            />
+            <StatCard icon={Star} label="Avg Rating" value={stats?.avgRating ? `${stats.avgRating}/5` : "No reviews"} />
           )}
-          <StatCard
-            icon={Clock}
-            label="Pending"
-            value={stats?.pendingJobs ?? 0}
-            sub={isProvider ? "jobs awaiting confirmation" : "bookings pending"}
-          />
+          <StatCard icon={Clock} label="Pending" value={stats?.pendingJobs ?? 0} sub={isProvider ? "jobs awaiting confirmation" : "bookings pending"} />
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 border-b border-border mb-6">
+        <div style={{ display: "flex", gap: "4px", borderBottom: "2px solid #E2E8F0", marginBottom: "24px" }}>
           {(["overview", "bookings", ...(isProvider ? ["services"] : [])] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
-              className={`px-4 py-2 text-sm font-medium capitalize transition-all border-b-2 -mb-px ${
-                activeTab === tab
-                  ? "border-accent text-accent"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              }`}
+              style={{
+                padding: "10px 20px",
+                fontSize: "14px",
+                fontWeight: 600,
+                textTransform: "capitalize",
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+                borderBottom: activeTab === tab ? "2px solid #3B82F6" : "2px solid transparent",
+                color: activeTab === tab ? "#3B82F6" : "#64748B",
+                marginBottom: "-2px",
+                transition: "all 0.2s",
+              }}
             >
               {tab}
             </button>
@@ -279,31 +273,35 @@ export default function Dashboard() {
 
         {/* Tab: Overview */}
         {activeTab === "overview" && (
-          <div className="space-y-4">
-            <h3 className="font-semibold text-foreground">Recent Activity</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <h3 style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A", marginBottom: "4px" }}>Recent Activity</h3>
             {jobs.slice(0, 5).length === 0 ? (
-              <div className="card-elegant text-center py-10">
-                <Calendar className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                <p className="text-muted-foreground">
+              <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", padding: "48px", textAlign: "center" }}>
+                <Calendar size={40} color="#CBD5E1" style={{ margin: "0 auto 12px" }} />
+                <p style={{ color: "#64748B", margin: "0 0 16px" }}>
                   {isProvider ? "No job requests yet. Your services are listed and ready!" : "No bookings yet. Browse services to get started."}
                 </p>
                 {!isProvider && (
-                  <Button onClick={() => setLocation("/services")} className="btn-primary mt-4">Browse Services</Button>
+                  <button onClick={() => setLocation("/services")} style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "10px", fontWeight: 600, cursor: "pointer" }}>
+                    Browse Services
+                  </button>
                 )}
               </div>
             ) : (
               jobs.slice(0, 5).map((job: any) => (
-                <div key={job.id} className="card-elegant flex items-center justify-between">
+                <div key={job.id} style={{ background: "#fff", borderRadius: "14px", border: "1px solid #E2E8F0", padding: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
                   <div>
-                    <p className="font-medium text-foreground">{job.serviceName}</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p style={{ fontWeight: 600, color: "#0F172A", margin: "0 0 4px" }}>{job.serviceName}</p>
+                    <p style={{ fontSize: "13px", color: "#64748B", margin: 0 }}>
                       {isProvider ? `Customer: ${(job as any).customerName}` : `Provider: ${(job as any).providerName}`}
                       {" · "}{new Date(job.bookingDate).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="font-semibold text-foreground">${job.totalPrice}</span>
-                    <Badge className={`text-xs ${STATUS_COLORS[job.status]}`}>{job.status}</Badge>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    <span style={{ fontWeight: 700, color: "#0F172A" }}>${job.totalPrice}</span>
+                    <span style={{ padding: "4px 10px", borderRadius: "999px", fontSize: "12px", fontWeight: 600, background: job.status === "completed" ? "#D1FAE5" : job.status === "confirmed" ? "#DBEAFE" : job.status === "cancelled" ? "#FEE2E2" : "#FEF3C7", color: job.status === "completed" ? "#065F46" : job.status === "confirmed" ? "#1E40AF" : job.status === "cancelled" ? "#991B1B" : "#92400E" }}>
+                      {job.status}
+                    </span>
                   </div>
                 </div>
               ))
@@ -311,51 +309,53 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Tab: Bookings / Jobs */}
+        {/* Tab: Bookings */}
         {activeTab === "bookings" && (
-          <div className="space-y-4">
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {jobs.length === 0 ? (
-              <div className="card-elegant text-center py-10">
-                <p className="text-muted-foreground">No {isProvider ? "job requests" : "bookings"} yet.</p>
+              <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", padding: "48px", textAlign: "center" }}>
+                <p style={{ color: "#64748B" }}>No {isProvider ? "job requests" : "bookings"} yet.</p>
               </div>
             ) : (
               jobs.map((job: any) => (
-                <div key={job.id} className="card-elegant">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex-1">
-                      <p className="font-semibold text-foreground">{job.serviceName}</p>
-                      <p className="text-sm text-muted-foreground">
+                <div key={job.id} style={{ background: "#fff", borderRadius: "14px", border: "1px solid #E2E8F0", padding: "20px" }}>
+                  <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+                    <div style={{ flex: 1 }}>
+                      <p style={{ fontWeight: 600, color: "#0F172A", margin: "0 0 4px" }}>{job.serviceName}</p>
+                      <p style={{ fontSize: "13px", color: "#64748B", margin: "0 0 6px" }}>
                         {isProvider ? `Customer: ${(job as any).customerName}` : `Provider: ${(job as any).providerName}`}
                       </p>
-                      <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                        <Calendar className="w-3 h-3" />
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "#94A3B8" }}>
+                        <Calendar size={12} />
                         {new Date(job.bookingDate).toLocaleString()}
                       </div>
                     </div>
-                    <div className="flex flex-col sm:items-end gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-accent">${job.totalPrice}</span>
-                        <Badge className={`text-xs ${STATUS_COLORS[job.status]}`}>{job.status}</Badge>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span style={{ fontWeight: 700, color: "#3B82F6" }}>${job.totalPrice}</span>
+                        <span style={{ padding: "4px 10px", borderRadius: "999px", fontSize: "12px", fontWeight: 600, background: job.status === "completed" ? "#D1FAE5" : job.status === "confirmed" ? "#DBEAFE" : job.status === "cancelled" ? "#FEE2E2" : "#FEF3C7", color: job.status === "completed" ? "#065F46" : job.status === "confirmed" ? "#1E40AF" : job.status === "cancelled" ? "#991B1B" : "#92400E" }}>
+                          {job.status}
+                        </span>
                       </div>
                       {isProvider && job.status === "pending" && (
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline" onClick={() => handleUpdateStatus(job.id, "confirmed")} className="flex items-center gap-1 text-blue-600 border-blue-200">
-                            <CheckCircle className="w-3 h-3" /> Confirm
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => handleUpdateStatus(job.id, "cancelled")} className="flex items-center gap-1 text-red-600 border-red-200">
-                            <XCircle className="w-3 h-3" /> Decline
-                          </Button>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                          <button onClick={() => handleUpdateStatus(job.id, "confirmed")} style={{ display: "flex", alignItems: "center", gap: "4px", padding: "6px 12px", border: "1px solid #BFDBFE", borderRadius: "8px", background: "#EFF6FF", color: "#1D4ED8", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+                            <CheckCircle size={13} /> Confirm
+                          </button>
+                          <button onClick={() => handleUpdateStatus(job.id, "cancelled")} style={{ display: "flex", alignItems: "center", gap: "4px", padding: "6px 12px", border: "1px solid #FECACA", borderRadius: "8px", background: "#FEF2F2", color: "#DC2626", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+                            <XCircle size={13} /> Decline
+                          </button>
                         </div>
                       )}
                       {isProvider && job.status === "confirmed" && (
-                        <Button size="sm" onClick={() => handleUpdateStatus(job.id, "completed")} className="btn-primary text-xs">
+                        <button onClick={() => handleUpdateStatus(job.id, "completed")} style={{ padding: "6px 12px", border: "none", borderRadius: "8px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
                           Mark Complete
-                        </Button>
+                        </button>
                       )}
                       {!isProvider && job.status === "completed" && (
-                        <Button size="sm" variant="outline" onClick={() => setReviewBooking(job)} className="flex items-center gap-1">
-                          <MessageSquare className="w-3 h-3" /> Leave Review
-                        </Button>
+                        <button onClick={() => setReviewBooking(job)} style={{ display: "flex", alignItems: "center", gap: "4px", padding: "6px 12px", border: "1px solid #E2E8F0", borderRadius: "8px", background: "#fff", color: "#64748B", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+                          <MessageSquare size={13} /> Leave Review
+                        </button>
                       )}
                     </div>
                   </div>
@@ -367,38 +367,33 @@ export default function Dashboard() {
 
         {/* Tab: Services (provider only) */}
         {activeTab === "services" && isProvider && (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <p className="text-sm text-muted-foreground">{myServices.filter((s) => s.providerId === user?.id).length} services listed</p>
-              <Button size="sm" onClick={() => setShowAddService(true)} className="btn-primary flex items-center gap-1">
-                <Plus className="w-4 h-4" /> Add Service
-              </Button>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <p style={{ fontSize: "14px", color: "#64748B", margin: 0 }}>{myServices.filter((s) => s.providerId === user?.id).length} services listed</p>
+              <button onClick={() => setShowAddService(true)} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 16px", border: "none", borderRadius: "10px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+                <Plus size={14} /> Add Service
+              </button>
             </div>
             {myServices.filter((s) => s.providerId === user?.id).length === 0 ? (
-              <div className="card-elegant text-center py-10">
-                <p className="text-muted-foreground">No services yet. Add your first service to start receiving bookings.</p>
+              <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", padding: "48px", textAlign: "center" }}>
+                <p style={{ color: "#64748B" }}>No services yet. Add your first service to start receiving bookings.</p>
               </div>
             ) : (
               myServices.filter((s) => s.providerId === user?.id).map((service) => (
-                <div key={service.id} className="card-elegant flex items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <p className="font-semibold text-foreground">{service.name}</p>
-                    <p className="text-sm text-muted-foreground capitalize">{service.category}</p>
-                    {service.description && <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{service.description}</p>}
+                <div key={service.id} style={{ background: "#fff", borderRadius: "14px", border: "1px solid #E2E8F0", padding: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px" }}>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontWeight: 600, color: "#0F172A", margin: "0 0 4px" }}>{service.name}</p>
+                    <p style={{ fontSize: "13px", color: "#64748B", margin: 0, textTransform: "capitalize" }}>{service.category}</p>
+                    {service.description && <p style={{ fontSize: "12px", color: "#94A3B8", margin: "4px 0 0", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical" }}>{service.description}</p>}
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <p className="font-bold text-accent">${service.price}</p>
-                      <p className="text-xs text-muted-foreground">per {service.unit || "job"}</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                    <div style={{ textAlign: "right" }}>
+                      <p style={{ fontWeight: 700, color: "#3B82F6", margin: 0 }}>${service.price}</p>
+                      <p style={{ fontSize: "12px", color: "#94A3B8", margin: 0 }}>per {service.unit || "job"}</p>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDeleteService(service.id)}
-                      className="text-red-600 border-red-200 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <button onClick={() => handleDeleteService(service.id)} style={{ padding: "8px", border: "1px solid #FECACA", borderRadius: "8px", background: "#FEF2F2", color: "#DC2626", cursor: "pointer", display: "flex", alignItems: "center" }}>
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
               ))
