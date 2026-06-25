@@ -1,61 +1,53 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, double, boolean } from "drizzle-orm/mysql-core";
+import { pgTable, pgEnum, text, timestamp, varchar, doublePrecision, boolean, serial, integer } from "drizzle-orm/pg-core";
 
-/**
- * Core user table backing auth flow.
- * Extend this file with additional tables as your product grows.
- * Columns use camelCase to match both database fields and generated types.
- */
-export const users = mysqlTable("users", {
-  /**
-   * Surrogate primary key. Auto-incremented numeric value managed by the database.
-   * Use this for relations between tables.
-   */
-  id: int("id").autoincrement().primaryKey(),
-  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
+export const roleEnum = pgEnum("role", ["customer", "provider", "admin"]);
+export const categoryEnum = pgEnum("category", ["household chores", "repairs", "personal care", "skilled trades"]);
+export const statusEnum = pgEnum("status", ["pending", "confirmed", "completed", "cancelled"]);
+
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["customer", "provider", "admin"]).default("customer").notNull(),
+  role: text("role").default("customer").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
-  // Provider specific fields
   isProvider: boolean("isProvider").default(false),
   bio: text("bio"),
-  // Add other provider-specific fields like profile picture, contact info, etc.
 });
 
-export const services = mysqlTable("services", {
-  id: int("id").autoincrement().primaryKey(),
-  providerId: int("providerId").notNull().references(() => users.id),
-  category: mysqlEnum("category", ["household chores", "repairs", "personal care", "skilled trades"]).notNull(),
+export const services = pgTable("services", {
+  id: serial("id").primaryKey(),
+  providerId: integer("providerId").notNull().references(() => users.id),
+  category: text("category").notNull(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
-  price: double("price").notNull(),
-  unit: varchar("unit", { length: 50 }), // e.g., "per hour", "per job"
+  price: doublePrecision("price").notNull(),
+  unit: varchar("unit", { length: 50 }),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
-export const bookings = mysqlTable("bookings", {
-  id: int("id").autoincrement().primaryKey(),
-  customerId: int("customerId").notNull().references(() => users.id),
-  providerId: int("providerId").notNull().references(() => users.id),
-  serviceId: int("serviceId").notNull().references(() => services.id),
+export const bookings = pgTable("bookings", {
+  id: serial("id").primaryKey(),
+  customerId: integer("customerId").notNull().references(() => users.id),
+  providerId: integer("providerId").notNull().references(() => users.id),
+  serviceId: integer("serviceId").notNull().references(() => services.id),
   bookingDate: timestamp("bookingDate").notNull(),
-  status: mysqlEnum("status", ["pending", "confirmed", "completed", "cancelled"]).default("pending").notNull(),
-  totalPrice: double("totalPrice").notNull(),
+  status: text("status").default("pending").notNull(),
+  totalPrice: doublePrecision("totalPrice").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 
-export const reviews = mysqlTable("reviews", {
-  id: int("id").autoincrement().primaryKey(),
-  bookingId: int("bookingId").notNull().references(() => bookings.id),
-  customerId: int("customerId").notNull().references(() => users.id),
-  providerId: int("providerId").notNull().references(() => users.id),
-  rating: int("rating").notNull(), // 1-5 stars
+export const reviews = pgTable("reviews", {
+  id: serial("id").primaryKey(),
+  bookingId: integer("bookingId").notNull().references(() => bookings.id),
+  customerId: integer("customerId").notNull().references(() => users.id),
+  providerId: integer("providerId").notNull().references(() => reviews.id),
+  rating: integer("rating").notNull(),
   comment: text("comment"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
