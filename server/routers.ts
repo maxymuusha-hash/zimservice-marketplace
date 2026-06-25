@@ -108,6 +108,7 @@ export const appRouter = router({
             description: services.description,
             price: services.price,
             unit: services.unit,
+            pricingNotes: services.pricingNotes,
             category: services.category,
             providerId: services.providerId,
             providerName: users.name,
@@ -144,6 +145,7 @@ export const appRouter = router({
           ]),
           price: z.number().positive(),
           unit: z.string().optional(),
+          pricingNotes: z.string().optional(),
         })
       )
       .mutation(async ({ ctx, input }) => {
@@ -347,6 +349,57 @@ export const appRouter = router({
           pendingJobs: myBookings.filter((b) => b.status === "pending").length,
         };
       }
+    }),
+  }),
+
+  subscription: router({
+    initiate: protectedProcedure
+      .input(z.object({
+        phone: z.string().min(9),
+        method: z.enum(["ecocash", "innbucks"]),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { initiateSubscriptionPayment } = await import("./paynow");
+        const email = ctx.user.email ?? "noemail@zimservice.app";
+        const result = await initiateSubscriptionPayment(email, input.phone, input.method);
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        await db.update(users)
+          .set({ lastPaymentRef: result.pollUrl })
+          .where(eq(users.id, ctx.user.id));
+        return result;
+      }),
+
+    poll: protectedProcedure
+      .input(z.object({ pollUrl: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const { pollPaymentStatus } = await import("./paynow");
+        const result = await pollPaymentStatus(input.pollUrl);
+        if (result.paid) {
+          const db = await getDb();
+          if (!db) throw new Error("Database unavailable");
+          const expiry = new Date();
+          expiry.setDate(expiry.getDate() + 30);
+          await db.update(users)
+            .set({
+              subscriptionStatus: "active",
+              subscriptionExpiry: expiry,
+              isProvider: true,
+              role: "provider",
+            })
+            .where(eq(users.id, ctx.user.id));
+        }
+        return result;
+      }),
+
+    status: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return { status: "none", expiry: null };
+      const [user] = await db.select().from(users).where(eq(users.id, ctx.user.id)).limit(1);
+      return {
+        status: user?.subscriptionStatus ?? "none",
+        expiry: user?.subscriptionExpiry ?? null,
+      };
     }),
   }),
 });
