@@ -28,6 +28,22 @@ const labelStyle = {
   marginBottom: "8px",
 };
 
+const selectStyle = {
+  ...{
+    width: "100%",
+    padding: "12px 16px",
+    border: "2px solid #E2E8F0",
+    borderRadius: "10px",
+    fontSize: "15px",
+    outline: "none",
+    boxSizing: "border-box" as const,
+    fontFamily: "Inter, sans-serif",
+    background: "#FAFAFA",
+    color: "#0F172A",
+    appearance: "auto" as const,
+  }
+};
+
 export default function ProviderOnboarding() {
   const { user, isAuthenticated, loading } = useAuth({ redirectOnUnauthenticated: false });
   const [, setLocation] = useLocation();
@@ -41,6 +57,7 @@ export default function ProviderOnboarding() {
   const [serviceCategory, setServiceCategory] = useState("household chores");
   const [servicePrice, setServicePrice] = useState("");
   const [serviceUnit, setServiceUnit] = useState("hour");
+  const [pricingNotes, setPricingNotes] = useState("");
 
   const onboard = trpc.provider.onboard.useMutation();
   const createService = trpc.services.create.useMutation();
@@ -66,7 +83,6 @@ export default function ProviderOnboarding() {
     return (
       <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#F8FAFC" }}>
         <Navbar />
-        {/* Dark hero */}
         <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E1B4B 100%)", padding: "80px 24px", textAlign: "center", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: "-60px", right: "-60px", width: "300px", height: "300px", background: "radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)", borderRadius: "50%" }} />
           <div style={{ position: "relative", zIndex: 1 }}>
@@ -114,6 +130,7 @@ export default function ProviderOnboarding() {
         category: serviceCategory as any,
         price: parseFloat(servicePrice),
         unit: serviceUnit,
+        pricingNotes: pricingNotes || undefined,
       });
       toast.success("Service added!");
       setLocation("/dashboard");
@@ -143,8 +160,6 @@ export default function ProviderOnboarding() {
           <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.65)", margin: "0 0 32px", maxWidth: "480px", lineHeight: 1.6 }}>
             Join 500+ verified providers earning on their own schedule. Set your rates, choose your jobs.
           </p>
-
-          {/* Benefits */}
           <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
             {[
               { icon: DollarSign, text: "Earn on your schedule", color: "#34D399" },
@@ -164,16 +179,16 @@ export default function ProviderOnboarding() {
       <div style={{ maxWidth: "680px", margin: "0 auto", padding: "40px 24px" }}>
 
         {/* Progress Steps */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0", marginBottom: "32px" }}>
+        <div style={{ display: "flex", alignItems: "center", marginBottom: "32px" }}>
           {[{ n: 1, label: "Your Profile" }, { n: 2, label: "Add a Service" }].map(({ n, label }, i) => (
-            <div key={n} style={{ display: "flex", alignItems: "center", flex: i < 1 ? "none" : 1 }}>
+            <div key={n} style={{ display: "flex", alignItems: "center", flex: i === 0 ? "none" : 1 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <div style={{ width: "36px", height: "36px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 700, background: step >= n ? "linear-gradient(135deg, #3B82F6, #6366F1)" : "#E2E8F0", color: step >= n ? "#fff" : "#94A3B8", flexShrink: 0 }}>
                   {step > n ? <CheckCircle size={18} /> : n}
                 </div>
                 <span style={{ fontSize: "14px", fontWeight: 600, color: step >= n ? "#0F172A" : "#94A3B8", whiteSpace: "nowrap" }}>{label}</span>
               </div>
-              {i < 1 && <div style={{ flex: 1, height: "2px", background: step > 1 ? "linear-gradient(135deg, #3B82F6, #6366F1)" : "#E2E8F0", margin: "0 16px" }} />}
+              {i === 0 && <div style={{ flex: 1, height: "2px", background: step > 1 ? "linear-gradient(135deg, #3B82F6, #6366F1)" : "#E2E8F0", margin: "0 16px" }} />}
             </div>
           ))}
         </div>
@@ -185,7 +200,6 @@ export default function ProviderOnboarding() {
               Tell customers about yourself
             </h2>
             <p style={{ fontSize: "14px", color: "#64748B", margin: "0 0 24px" }}>This will appear on your public profile</p>
-
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               <div>
                 <label style={labelStyle}>Bio <span style={{ color: "#EF4444" }}>*</span></label>
@@ -207,7 +221,6 @@ export default function ProviderOnboarding() {
                 <input type="text" placeholder="Harare, Zimbabwe" value={location2} onChange={(e) => setLocation2(e.target.value)} style={inputStyle} />
               </div>
             </div>
-
             <button
               onClick={handleOnboard}
               disabled={onboard.isPending}
@@ -230,15 +243,14 @@ export default function ProviderOnboarding() {
                 <p style={{ fontSize: "14px", color: "#64748B", margin: 0 }}>Now add your first service listing</p>
               </div>
             </div>
-
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               <div>
                 <label style={labelStyle}>Service Name <span style={{ color: "#EF4444" }}>*</span></label>
-                <input type="text" placeholder="e.g. House Cleaning, Plumbing Repairs..." value={serviceName} onChange={(e) => setServiceName(e.target.value)} style={inputStyle} />
+                <input type="text" placeholder="e.g. House Cleaning, Solar Installation, Car Wash..." value={serviceName} onChange={(e) => setServiceName(e.target.value)} style={inputStyle} />
               </div>
               <div>
                 <label style={labelStyle}>Category <span style={{ color: "#EF4444" }}>*</span></label>
-                <select value={serviceCategory} onChange={(e) => setServiceCategory(e.target.value)} style={{ ...inputStyle, appearance: "auto" as const }}>
+                <select value={serviceCategory} onChange={(e) => setServiceCategory(e.target.value)} style={selectStyle}>
                   <option value="household chores">🏠 Household Chores</option>
                   <option value="repairs">🔧 Repairs</option>
                   <option value="personal care">💆 Personal Care</option>
@@ -256,16 +268,34 @@ export default function ProviderOnboarding() {
                 </div>
                 <div>
                   <label style={labelStyle}>Pricing Unit</label>
-                  <select value={serviceUnit} onChange={(e) => setServiceUnit(e.target.value)} style={{ ...inputStyle, appearance: "auto" as const }}>
+                  <select value={serviceUnit} onChange={(e) => setServiceUnit(e.target.value)} style={selectStyle}>
                     <option value="hour">per hour</option>
                     <option value="job">per job (fixed)</option>
                     <option value="day">per day</option>
                     <option value="visit">per visit</option>
+                    <option value="unit">per unit</option>
+                    <option value="m2">per m²</option>
+                    <option value="kW">per kW</option>
+                    <option value="kg">per kg</option>
+                    <option value="trip">per trip</option>
+                    <option value="quote">quote/negotiable</option>
                   </select>
                 </div>
               </div>
+              <div>
+                <label style={labelStyle}>
+                  Pricing Notes <span style={{ fontWeight: 400, color: "#94A3B8" }}>(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder='e.g. "Price includes materials", "Site visit required", "Min. 4 solar panels"'
+                  value={pricingNotes}
+                  onChange={(e) => setPricingNotes(e.target.value)}
+                  style={inputStyle}
+                />
+                <p style={{ fontSize: "12px", color: "#94A3B8", marginTop: "6px" }}>Help customers understand your pricing structure</p>
+              </div>
             </div>
-
             <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
               <button
                 onClick={() => setLocation("/dashboard")}
