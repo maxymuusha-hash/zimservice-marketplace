@@ -1,4 +1,6 @@
-import Paynow from "paynow";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const Paynow = require("paynow");
 
 const paynow = new Paynow(
   process.env.PAYNOW_INTEGRATION_ID!,
