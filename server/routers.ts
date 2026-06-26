@@ -360,7 +360,7 @@ export const appRouter = router({
       }))
       .mutation(async ({ ctx, input }) => {
         const { initiateSubscriptionPayment } = await import("./paynow");
-        const email = ctx.user.email ?? "noemail@zimservice.app";
+        const email = "maxymuusha@gmail.com";
         const result = await initiateSubscriptionPayment(email, input.phone, input.method);
         const db = await getDb();
         if (!db) throw new Error("Database unavailable");
