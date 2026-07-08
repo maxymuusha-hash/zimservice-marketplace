@@ -50,7 +50,7 @@ export default function Home() {
                 🇿🇼 Zimbabwe's #1 Service Marketplace
               </div>
               <h1 className="hero-title" style={{ fontWeight: 800, lineHeight: 1.1, color: "#0F172A", marginBottom: "16px", fontFamily: "Playfair Display, serif" }}>
-                Trusted Local Services,{" "}
+                Smart Services,{" "}
                 <span style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                   On Demand
                 </span>
@@ -152,7 +152,7 @@ export default function Home() {
       <section style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", padding: "60px 0" }}>
         <div style={{ maxWidth: "600px", margin: "0 auto", padding: "0 20px", textAlign: "center" }}>
           <h2 style={{ fontSize: "32px", fontWeight: 800, color: "#fff", marginBottom: "12px", fontFamily: "Playfair Display, serif" }}>Ready to Get Started?</h2>
-          <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.85)", marginBottom: "28px" }}>Join thousands of Zimbabweans using ZimService every day.</p>
+          <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.85)", marginBottom: "28px" }}>Join thousands of Zimbabweans using SmartServ every day.</p>
           <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
             <button onClick={() => setLocation("/services")} style={{ background: "#fff", color: "#3B82F6", border: "none", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 700, cursor: "pointer" }}>
               Find Services
@@ -184,10 +184,10 @@ export default function Home() {
           </div>
           <div style={{ borderTop: "1px solid #1E293B", paddingTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <div style={{ width: "28px", height: "28px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: "14px" }}>Z</div>
-              <span style={{ color: "#fff", fontWeight: 700, fontSize: "15px" }}>ZimService</span>
+              <div style={{ width: "28px", height: "28px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: "12px" }}>SS</div>
+              <span style={{ color: "#fff", fontWeight: 700, fontSize: "15px" }}>SmartServ</span>
             </div>
-            <span style={{ fontSize: "13px", color: "#64748B" }}>© 2026 ZimService. All rights reserved.</span>
+            <span style={{ fontSize: "13px", color: "#64748B" }}>© 2026 SmartServ. All rights reserved.</span>
           </div>
         </div>
       </footer>
