@@ -188,6 +188,9 @@ export default function Dashboard() {
     { search: undefined },
     { enabled: isAuthenticated && !!user?.isProvider }
   );
+  const { data: subStatus } = trpc.subscription.status.useQuery(undefined, {
+    enabled: isAuthenticated && !!user?.isProvider,
+  });
   const updateStatus = trpc.bookings.updateStatus.useMutation();
   const deleteService = trpc.services.delete.useMutation();
   const utils = trpc.useUtils();
@@ -207,6 +210,22 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  const isProvider = user?.isProvider;
+  const hasActiveSubscription = !!(
+    subStatus?.status === "active" &&
+    subStatus?.expiry &&
+    new Date(subStatus.expiry) > new Date()
+  );
+
+  const handleAddServiceClick = () => {
+    if (!hasActiveSubscription) {
+      toast.error("An active subscription is required to add services.");
+      setLocation("/subscribe");
+      return;
+    }
+    setShowAddService(true);
+  };
 
   const handleUpdateStatus = async (bookingId: number, status: "confirmed" | "completed" | "cancelled") => {
     try {
@@ -228,7 +247,6 @@ export default function Dashboard() {
     }
   };
 
-  const isProvider = user?.isProvider;
   const jobs = isProvider ? providerJobs : myBookings;
 
   return (
@@ -259,7 +277,7 @@ export default function Dashboard() {
           </div>
           {isProvider && (
             <button
-              onClick={() => setShowAddService(true)}
+              onClick={handleAddServiceClick}
               style={{ display: "flex", alignItems: "center", gap: "8px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "14px 24px", borderRadius: "12px", fontSize: "15px", fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 16px rgba(99,102,241,0.4)", flexShrink: 0 }}
             >
               <Plus size={16} /> Add Service
@@ -270,6 +288,23 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "32px 24px" }}>
+
+        {/* Subscription banner */}
+        {isProvider && !hasActiveSubscription && (
+          <div style={{ background: "#FEF3C7", border: "1px solid #FDE68A", borderRadius: "12px", padding: "16px 20px", marginBottom: "24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <span style={{ fontSize: "20px" }}>⚠️</span>
+              <span style={{ fontSize: "14px", color: "#92400E", fontWeight: 500 }}>
+                {subStatus?.status === "active"
+                  ? "Your subscription has expired. Renew to keep your services listed."
+                  : "Subscribe to list services and start receiving bookings."}
+              </span>
+            </div>
+            <button onClick={() => setLocation("/subscribe")} style={{ background: "#F59E0B", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+              Subscribe Now
+            </button>
+          </div>
+        )}
 
         {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "32px" }}>
@@ -391,13 +426,13 @@ export default function Dashboard() {
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <p style={{ fontSize: "14px", color: "#64748B", margin: 0 }}>{myServices.filter((s) => s.providerId === user?.id).length} services listed</p>
-              <button onClick={() => setShowAddService(true)} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 16px", border: "none", borderRadius: "10px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
+              <button onClick={handleAddServiceClick} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "8px 16px", border: "none", borderRadius: "10px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", fontSize: "13px", fontWeight: 600, cursor: "pointer" }}>
                 <Plus size={14} /> Add Service
               </button>
             </div>
             {myServices.filter((s) => s.providerId === user?.id).length === 0 ? (
               <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E2E8F0", padding: "48px", textAlign: "center" }}>
-                <p style={{ color: "#64748B" }}>No services yet. Add your first service to start receiving bookings.</p>
+                <p style={{ color: "#64748B" }}>No services yet. {hasActiveSubscription ? "Add your first service to start receiving bookings." : "Subscribe to add your first service."}</p>
               </div>
             ) : (
               myServices.filter((s) => s.providerId === user?.id).map((service) => (
