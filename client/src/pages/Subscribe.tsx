@@ -21,7 +21,6 @@ export default function Subscribe() {
     enabled: isAuthenticated,
   });
 
-  // Poll every 5 seconds once we have a pollUrl
   useEffect(() => {
     if (!pollUrl || paid) return;
     setPolling(true);
@@ -68,7 +67,7 @@ export default function Subscribe() {
             <CheckCircle size={40} color="#34D399" />
           </div>
           <h1 style={{ fontSize: "36px", fontWeight: 800, color: "#fff", marginBottom: "12px", fontFamily: "Playfair Display, serif" }}>Subscription Active!</h1>
-          <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.65)", marginBottom: "32px" }}>Your subscription renews on {expiry}</p>
+          <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.65)", marginBottom: "32px" }}>Your SmartServ subscription renews on {expiry}</p>
           <button onClick={() => setLocation("/dashboard")} style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 700, cursor: "pointer" }}>
             Go to Dashboard
           </button>
@@ -97,13 +96,13 @@ export default function Subscribe() {
         <div style={{ position: "absolute", top: "-60px", right: "-60px", width: "300px", height: "300px", background: "radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)", borderRadius: "50%" }} />
         <div style={{ maxWidth: "760px", margin: "0 auto", position: "relative", zIndex: 1, textAlign: "center" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(99,102,241,0.2)", color: "#A5B4FC", padding: "6px 16px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "16px", border: "1px solid rgba(99,102,241,0.3)" }}>
-            <Zap size={13} /> Provider Subscription
+            <Zap size={13} /> SmartServ Provider Subscription
           </div>
           <h1 style={{ fontSize: "40px", fontWeight: 800, color: "#fff", margin: "0 0 12px", fontFamily: "Playfair Display, serif" }}>
-            Activate Your Provider Account
+            Activate Your SmartServ Account
           </h1>
           <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.65)", margin: "0 0 32px", lineHeight: 1.6 }}>
-            Subscribe for just <strong style={{ color: "#fff" }}>$2/month</strong> to list your services and start receiving bookings.
+            Subscribe for just <strong style={{ color: "#fff" }}>$2/month</strong> to list your services and start receiving bookings on SmartServ.
           </p>
           <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
             {[
@@ -125,9 +124,8 @@ export default function Subscribe() {
         {!pollUrl ? (
           <div style={{ background: "#fff", borderRadius: "20px", border: "1px solid #E2E8F0", padding: "32px", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
             <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#0F172A", margin: "0 0 6px", fontFamily: "Playfair Display, serif" }}>Pay $2.00</h2>
-            <p style={{ fontSize: "14px", color: "#64748B", margin: "0 0 24px" }}>1 month provider subscription</p>
+            <p style={{ fontSize: "14px", color: "#64748B", margin: "0 0 24px" }}>1 month SmartServ provider subscription</p>
 
-            {/* Payment method */}
             <div style={{ marginBottom: "20px" }}>
               <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "10px" }}>Payment Method</label>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
@@ -143,7 +141,6 @@ export default function Subscribe() {
               </div>
             </div>
 
-            {/* Phone number */}
             <div style={{ marginBottom: "24px" }}>
               <label style={{ fontSize: "14px", fontWeight: 600, color: "#374151", display: "block", marginBottom: "8px" }}>
                 {method === "ecocash" ? "EcoCash" : "InnBucks"} Number
@@ -173,7 +170,7 @@ export default function Subscribe() {
           <div style={{ background: "#fff", borderRadius: "20px", border: "1px solid #E2E8F0", padding: "40px", textAlign: "center", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
             <CheckCircle size={56} color="#34D399" style={{ margin: "0 auto 16px" }} />
             <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#0F172A", marginBottom: "8px", fontFamily: "Playfair Display, serif" }}>Payment Confirmed!</h2>
-            <p style={{ color: "#64748B" }}>Redirecting to your dashboard...</p>
+            <p style={{ color: "#64748B" }}>Redirecting to your SmartServ dashboard...</p>
           </div>
         ) : (
           <div style={{ background: "#fff", borderRadius: "20px", border: "1px solid #E2E8F0", padding: "40px", textAlign: "center", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
