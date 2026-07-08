@@ -34,8 +34,8 @@ export default function Navbar() {
 
         {/* Logo */}
         <button onClick={() => navigate("/")} style={{ display: "flex", alignItems: "center", gap: "8px", background: "none", border: "none", cursor: "pointer", flexShrink: 0 }}>
-          <div style={{ width: "32px", height: "32px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: "16px" }}>Z</div>
-          <span style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A" }}>ZimService</span>
+          <div style={{ width: "32px", height: "32px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: "14px" }}>SS</div>
+          <span style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A" }}>SmartServ</span>
         </button>
 
         {/* Desktop Nav */}
