@@ -152,6 +152,17 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error("Database unavailable");
         if (!ctx.user.isProvider) throw new Error("Only providers can create services");
+
+        const now = new Date();
+        const hasActiveSubscription =
+          ctx.user.subscriptionStatus === "active" &&
+          ctx.user.subscriptionExpiry &&
+          new Date(ctx.user.subscriptionExpiry) > now;
+
+        if (!hasActiveSubscription) {
+          throw new Error("An active subscription is required to list services. Please subscribe to continue.");
+        }
+
         await db.insert(services).values({
           ...input,
           providerId: ctx.user.id,
