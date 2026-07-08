@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import Subscribe from "./pages/Subscribe";
+
 function Router() {
   return (
     <Switch>
@@ -22,7 +23,7 @@ function Router() {
       <Route path="/provider/onboarding" component={ProviderOnboarding} />
       <Route path="/provider/:id" component={ProviderProfile} />
       <Route path="/dashboard" component={Dashboard} />
-<Route path="/subscribe" component={Subscribe} />
+      <Route path="/subscribe" component={Subscribe} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -34,7 +35,7 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
-          <Toaster />
+          <Toaster position="top-center" richColors closeButton />
           <Router />
         </TooltipProvider>
       </ThemeProvider>
