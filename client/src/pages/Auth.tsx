@@ -84,19 +84,18 @@ export default function Auth() {
 
       {/* Left panel — branding */}
       <div style={{ flex: 1, background: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E1B4B 100%)", display: "flex", flexDirection: "column", justifyContent: "center", padding: "48px", position: "relative", overflow: "hidden" }} className="hidden-mobile">
-        {/* Decorative blobs */}
         <div style={{ position: "absolute", top: "-80px", right: "-80px", width: "350px", height: "350px", background: "radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)", borderRadius: "50%" }} />
         <div style={{ position: "absolute", bottom: "-60px", left: "-40px", width: "280px", height: "280px", background: "radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%)", borderRadius: "50%" }} />
 
         <div style={{ position: "relative", zIndex: 1 }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "48px" }}>
-            <div style={{ width: "44px", height: "44px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "20px", color: "#fff" }}>Z</div>
-            <span style={{ fontSize: "22px", fontWeight: 800, color: "#fff" }}>ZimService</span>
+            <div style={{ width: "44px", height: "44px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "18px", color: "#fff" }}>SS</div>
+            <span style={{ fontSize: "22px", fontWeight: 800, color: "#fff" }}>SmartServ</span>
           </div>
 
           <h1 style={{ fontSize: "44px", fontWeight: 800, color: "#fff", margin: "0 0 16px", fontFamily: "Playfair Display, serif", lineHeight: 1.15 }}>
-            Zimbabwe's Trusted<br />
+            Zimbabwe's Smartest<br />
             <span style={{ background: "linear-gradient(135deg, #60A5FA, #A78BFA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               Service Marketplace
             </span>
@@ -128,15 +127,15 @@ export default function Auth() {
 
         {/* Mobile logo */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "40px" }}>
-          <div style={{ width: "36px", height: "36px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "16px", color: "#fff" }}>Z</div>
-          <span style={{ fontSize: "18px", fontWeight: 800, color: "#0F172A" }}>ZimService</span>
+          <div style={{ width: "36px", height: "36px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: "14px", color: "#fff" }}>SS</div>
+          <span style={{ fontSize: "18px", fontWeight: 800, color: "#0F172A" }}>SmartServ</span>
         </div>
 
         <h2 style={{ fontSize: "28px", fontWeight: 800, color: "#0F172A", margin: "0 0 6px", fontFamily: "Playfair Display, serif" }}>
           {mode === "signin" ? "Welcome back" : mode === "signup" ? "Create account" : mode === "forgot" ? "Reset password" : "Set new password"}
         </h2>
         <p style={{ fontSize: "14px", color: "#64748B", margin: "0 0 32px" }}>
-          {mode === "signin" ? "Sign in to your ZimService account" : mode === "signup" ? "Join thousands of Zimbabweans" : mode === "forgot" ? "We'll send you a reset link" : "Enter your new password below"}
+          {mode === "signin" ? "Sign in to your SmartServ account" : mode === "signup" ? "Join thousands of Zimbabweans on SmartServ" : mode === "forgot" ? "We'll send you a reset link" : "Enter your new password below"}
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
