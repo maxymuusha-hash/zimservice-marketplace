@@ -34,6 +34,8 @@ async function startServer() {
       if (!origin) return callback(null, true);
       if (
         origin.endsWith(".vercel.app") ||
+        origin === "https://smartserv.co.zw" ||
+        origin === "https://www.smartserv.co.zw" ||
         origin === "http://localhost:3000" ||
         origin === "http://localhost:5173"
       ) {
