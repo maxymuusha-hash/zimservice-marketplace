@@ -68,7 +68,7 @@ export default function ProviderOnboarding() {
       <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#F8FAFC" }}>
         <Navbar />
         <div style={{ background: "linear-gradient(135deg, #0F172A 0%, #1E3A5F 50%, #1E1B4B 100%)", padding: "80px 24px", textAlign: "center" }}>
-          <h2 style={{ fontSize: "32px", fontWeight: 800, color: "#fff", marginBottom: "16px", fontFamily: "Playfair Display, serif" }}>Sign in to become a provider</h2>
+          <h2 style={{ fontSize: "32px", fontWeight: 800, color: "#fff", marginBottom: "16px", fontFamily: "Playfair Display, serif" }}>Sign in to become a SmartServ provider</h2>
           <button onClick={() => window.location.href = getLoginUrl()} style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 600, cursor: "pointer" }}>
             Sign In
           </button>
@@ -88,13 +88,13 @@ export default function ProviderOnboarding() {
               <CheckCircle size={40} color="#34D399" />
             </div>
             <div style={{ display: "inline-block", background: "rgba(52,211,153,0.15)", color: "#34D399", padding: "4px 16px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "16px", border: "1px solid rgba(52,211,153,0.3)" }}>
-              ✓ Verified Provider
+              ✓ Verified SmartServ Provider
             </div>
             <h1 style={{ fontSize: "40px", fontWeight: 800, color: "#fff", margin: "0 0 12px", fontFamily: "Playfair Display, serif" }}>
               You're already a provider!
             </h1>
             <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.65)", marginBottom: "32px" }}>
-              Manage your services and bookings from the dashboard.
+              Manage your services and bookings from your SmartServ dashboard.
             </p>
             <button
               onClick={() => setLocation("/dashboard")}
@@ -130,7 +130,7 @@ export default function ProviderOnboarding() {
         unit: serviceUnit,
         pricingNotes: pricingNotes || undefined,
       });
-      toast.success("Service added! Now activate your subscription.");
+      toast.success("Service added! Now activate your SmartServ subscription.");
       setLocation("/subscribe");
     } catch (e: any) {
       toast.error(e.message || "Failed to add service");
@@ -152,11 +152,11 @@ export default function ProviderOnboarding() {
           <h1 style={{ fontSize: "40px", fontWeight: 800, color: "#fff", margin: "0 0 12px", fontFamily: "Playfair Display, serif", lineHeight: 1.15 }}>
             Become a{" "}
             <span style={{ background: "linear-gradient(135deg, #60A5FA, #A78BFA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              ZimService Provider
+              SmartServ Provider
             </span>
           </h1>
           <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.65)", margin: "0 0 32px", maxWidth: "480px", lineHeight: 1.6 }}>
-            Join 500+ verified providers earning on their own schedule. Set your rates, choose your jobs.
+            Join 500+ verified providers earning on their own schedule on SmartServ. Set your rates, choose your jobs.
           </p>
           <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
             {[
@@ -197,7 +197,7 @@ export default function ProviderOnboarding() {
             <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#0F172A", margin: "0 0 6px", fontFamily: "Playfair Display, serif" }}>
               Tell customers about yourself
             </h2>
-            <p style={{ fontSize: "14px", color: "#64748B", margin: "0 0 24px" }}>This will appear on your public profile</p>
+            <p style={{ fontSize: "14px", color: "#64748B", margin: "0 0 24px" }}>This will appear on your SmartServ public profile</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
               <div>
                 <label style={labelStyle}>Bio <span style={{ color: "#EF4444" }}>*</span></label>
@@ -238,7 +238,7 @@ export default function ProviderOnboarding() {
               </div>
               <div>
                 <h2 style={{ fontSize: "20px", fontWeight: 800, color: "#0F172A", margin: 0, fontFamily: "Playfair Display, serif" }}>Profile created! 🎉</h2>
-                <p style={{ fontSize: "14px", color: "#64748B", margin: 0 }}>Now add your first service listing</p>
+                <p style={{ fontSize: "14px", color: "#64748B", margin: 0 }}>Now add your first SmartServ service listing</p>
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
