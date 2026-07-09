@@ -1,5 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
-import { ArrowRight, Briefcase, Home as HomeIcon, Heart, Wrench, Star, CheckCircle, Shield, Clock } from "lucide-react";
+import { ArrowRight, Briefcase, Home as HomeIcon, Heart, Wrench, Star, CheckCircle, Shield, Clock, ShieldCheck, MapPin } from "lucide-react";
 import { useLocation } from "wouter";
 import { getLoginUrl } from "@/const";
 import Navbar from "@/components/Navbar";
@@ -10,6 +10,15 @@ const CATEGORIES = [
   { name: "Personal Care", desc: "Grooming, fitness, wellness", icon: Heart, bg: "#EC4899" },
   { name: "Skilled Trades", desc: "Carpentry, painting, building", icon: Briefcase, bg: "#F59E0B" },
 ];
+
+const TRUST_BADGES = [
+  { icon: ShieldCheck, title: "Verified Providers", sub: "Every provider is checked", color: "#10B981" },
+  { icon: Star, title: "Rated & Reviewed", sub: "Real customer ratings", color: "#F59E0B" },
+  { icon: MapPin, title: "Local to Zimbabwe", sub: "Built for the local market", color: "#3B82F6" },
+];
+
+// TODO: replace with your actual SmartServ Facebook page URL
+const FACEBOOK_URL = "https://www.facebook.com/YOUR_PAGE_HERE";
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -27,7 +36,7 @@ export default function Home() {
         .footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
         .hero-trust { display: flex; flex-direction: column; gap: 16px; }
         .cta-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
-        .stats-row { display: flex; gap: 32px; flex-wrap: wrap; }
+        .badges-row { display: flex; gap: 28px; flex-wrap: wrap; }
         @media (max-width: 768px) {
           .hero-grid { grid-template-columns: 1fr; gap: 32px; }
           .hero-title { font-size: 32px !important; }
@@ -35,7 +44,7 @@ export default function Home() {
           .cat-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
           .how-grid { grid-template-columns: 1fr; gap: 16px; }
           .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
-          .stats-row { gap: 20px; }
+          .badges-row { gap: 16px; }
           .cta-buttons { flex-direction: column; }
           .cta-buttons button { width: 100%; justify-content: center; }
         }
@@ -47,7 +56,7 @@ export default function Home() {
           <div className="hero-grid">
             <div>
               <div style={{ display: "inline-block", background: "#EEF2FF", color: "#4F46E5", padding: "6px 16px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "20px" }}>
-                🇿🇼 Zimbabwe's #1 Service Marketplace
+                🇿🇼 Zimbabwe's Service Marketplace
               </div>
               <h1 className="hero-title" style={{ fontWeight: 800, lineHeight: 1.1, color: "#0F172A", marginBottom: "16px", fontFamily: "Playfair Display, serif" }}>
                 Smart Services,{" "}
@@ -72,11 +81,16 @@ export default function Home() {
                   Become a Provider
                 </button>
               </div>
-              <div className="stats-row">
-                {[["500+", "Verified Providers"], ["2,000+", "Happy Customers"], ["4.8★", "Average Rating"]].map(([val, label]) => (
-                  <div key={label}>
-                    <div style={{ fontSize: "22px", fontWeight: 800, color: "#0F172A" }}>{val}</div>
-                    <div style={{ fontSize: "13px", color: "#64748B" }}>{label}</div>
+              <div className="badges-row">
+                {TRUST_BADGES.map(({ icon: Icon, title, sub, color }) => (
+                  <div key={title} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: `${color}18`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <Icon size={18} color={color} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: "14px", fontWeight: 700, color: "#0F172A", lineHeight: 1.3 }}>{title}</div>
+                      <div style={{ fontSize: "12px", color: "#64748B" }}>{sub}</div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -152,7 +166,7 @@ export default function Home() {
       <section style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", padding: "60px 0" }}>
         <div style={{ maxWidth: "600px", margin: "0 auto", padding: "0 20px", textAlign: "center" }}>
           <h2 style={{ fontSize: "32px", fontWeight: 800, color: "#fff", marginBottom: "12px", fontFamily: "Playfair Display, serif" }}>Ready to Get Started?</h2>
-          <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.85)", marginBottom: "28px" }}>Join thousands of Zimbabweans using SmartServ every day.</p>
+          <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.85)", marginBottom: "28px" }}>Join Zimbabweans using SmartServ to get things done.</p>
           <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
             <button onClick={() => setLocation("/services")} style={{ background: "#fff", color: "#3B82F6", border: "none", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 700, cursor: "pointer" }}>
               Find Services
@@ -169,15 +183,23 @@ export default function Home() {
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
           <div className="footer-grid" style={{ marginBottom: "40px" }}>
             {[
-              { title: "About", links: ["About Us", "Blog", "Careers"] },
-              { title: "Support", links: ["Help Center", "Contact Us", "FAQ"] },
-              { title: "Legal", links: ["Privacy Policy", "Terms of Service", "Cookie Policy"] },
-              { title: "Connect", links: ["Twitter", "Facebook", "Instagram"] },
+              { title: "About", links: [{ label: "About Us", href: "#" }, { label: "Blog", href: "#" }, { label: "Careers", href: "#" }] },
+              { title: "Support", links: [{ label: "Help Center", href: "#" }, { label: "Contact Us", href: "#" }, { label: "FAQ", href: "#" }] },
+              { title: "Legal", links: [{ label: "Privacy Policy", href: "#" }, { label: "Terms of Service", href: "#" }, { label: "Disclaimer", href: "/disclaimer" }] },
+              { title: "Connect", links: [{ label: "Facebook", href: FACEBOOK_URL, external: true }] },
             ].map(({ title, links }) => (
               <div key={title}>
                 <div style={{ fontSize: "13px", fontWeight: 700, color: "#fff", marginBottom: "14px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{title}</div>
-                {links.map(link => (
-                  <a key={link} href="#" style={{ display: "block", fontSize: "14px", color: "#94A3B8", marginBottom: "8px", textDecoration: "none" }}>{link}</a>
+                {links.map((link) => (
+                  
+                    key={link.label}
+                    href={link.href}
+                    {...(link as any).external ? { target: "_blank", rel: "noopener noreferrer" } : {}}
+                    onClick={link.href.startsWith("/") ? (e) => { e.preventDefault(); setLocation(link.href); } : undefined}
+                    style={{ display: "block", fontSize: "14px", color: "#94A3B8", marginBottom: "8px", textDecoration: "none" }}
+                  >
+                    {link.label}
+                  </a>
                 ))}
               </div>
             ))}
