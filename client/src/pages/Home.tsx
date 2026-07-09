@@ -47,29 +47,28 @@ export default function Home() {
       `}</style>
 
       {/* Hero */}
-     <section style={{ background: "linear-gradient(135deg, #DBEAFE 0%, #EDE9FE 45%, #FCE7F3 100%)", padding: "60px 0", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: "-80px", right: "-60px", width: "400px", height: "400px", background: "radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%)", borderRadius: "50%" }} />
-        <div style={{ position: "absolute", bottom: "-60px", left: "5%", width: "300px", height: "300px", background: "radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)", borderRadius: "50%" }} />
-        <div style={{ position: "absolute", top: "20%", left: "45%", width: "250px", height: "250px", background: "radial-gradient(circle, rgba(236,72,153,0.18) 0%, transparent 70%)", borderRadius: "50%" }} />
+      <section style={{ background: "linear-gradient(135deg, #93C5FD 0%, #A5B4FC 50%, #BFDBFE 100%)", padding: "60px 0", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "-80px", right: "-60px", width: "400px", height: "400px", background: "radial-gradient(circle, rgba(37,99,235,0.4) 0%, transparent 70%)", borderRadius: "50%" }} />
+        <div style={{ position: "absolute", bottom: "-60px", left: "5%", width: "300px", height: "300px", background: "radial-gradient(circle, rgba(29,78,216,0.35) 0%, transparent 70%)", borderRadius: "50%" }} />
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px", position: "relative", zIndex: 1 }}>
           <div className="hero-grid">
             <div>
-              <div style={{ display: "inline-block", background: "#EEF2FF", color: "#4F46E5", padding: "6px 16px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "20px" }}>
+              <div style={{ display: "inline-block", background: "rgba(255,255,255,0.85)", color: "#4F46E5", padding: "6px 16px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "20px" }}>
                 🇿🇼 Zimbabwe's Service Marketplace
               </div>
               <h1 className="hero-title" style={{ fontWeight: 800, lineHeight: 1.1, color: "#0F172A", marginBottom: "16px", fontFamily: "Playfair Display, serif" }}>
                 Smart Services,{" "}
-                <span style={{ background: "linear-gradient(135deg, #3B82F6, #6366F1)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                <span style={{ background: "linear-gradient(135deg, #1D4ED8, #4338CA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                   On Demand
                 </span>
               </h1>
-              <p style={{ fontSize: "16px", color: "#64748B", lineHeight: 1.7, marginBottom: "28px" }}>
+              <p style={{ fontSize: "16px", color: "#1E293B", lineHeight: 1.7, marginBottom: "28px" }}>
                 Connect with vetted service providers in your community. From household chores to skilled trades — find the help you need with confidence.
               </p>
               <div className="cta-buttons" style={{ marginBottom: "32px" }}>
                 <button
                   onClick={() => setLocation("/services")}
-                  style={{ display: "flex", alignItems: "center", gap: "8px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 600, cursor: "pointer" }}
+                  style={{ display: "flex", alignItems: "center", gap: "8px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", color: "#fff", border: "none", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 16px rgba(37,99,235,0.35)" }}
                 >
                   Browse Services <ArrowRight size={18} />
                 </button>
@@ -83,25 +82,25 @@ export default function Home() {
               <div className="badges-row">
                 {TRUST_BADGES.map(({ icon: Icon, title, sub, color }) => (
                   <div key={title} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: `${color}18`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: "rgba(255,255,255,0.8)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                       <Icon size={18} color={color} />
                     </div>
                     <div>
                       <div style={{ fontSize: "14px", fontWeight: 700, color: "#0F172A", lineHeight: 1.3 }}>{title}</div>
-                      <div style={{ fontSize: "12px", color: "#64748B" }}>{sub}</div>
+                      <div style={{ fontSize: "12px", color: "#334155" }}>{sub}</div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="hero-trust" style={{ background: "linear-gradient(135deg, #EEF2FF, #F0F9FF)", borderRadius: "24px", padding: "40px" }}>
+            <div className="hero-trust" style={{ background: "rgba(255,255,255,0.55)", borderRadius: "24px", padding: "40px", backdropFilter: "blur(4px)" }}>
               {[
                 { icon: CheckCircle, text: "Verified & background-checked providers", color: "#10B981" },
                 { icon: Shield, text: "Secure Paynow payment processing", color: "#3B82F6" },
                 { icon: Clock, text: "Book anytime, service on your schedule", color: "#F59E0B" },
                 { icon: Star, text: "Rated & reviewed by real customers", color: "#EC4899" },
               ].map(({ icon: Icon, text, color }) => (
-                <div key={text} style={{ display: "flex", alignItems: "center", gap: "12px", background: "#fff", padding: "16px", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
+                <div key={text} style={{ display: "flex", alignItems: "center", gap: "12px", background: "#fff", padding: "16px", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
                   <Icon size={20} color={color} />
                   <span style={{ fontSize: "14px", color: "#334155", fontWeight: 500 }}>{text}</span>
                 </div>
