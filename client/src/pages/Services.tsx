@@ -2,7 +2,7 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import Navbar from "@/components/Navbar";
 import { useLocation } from "wouter";
-import { Search, ChevronRight, Zap } from "lucide-react";
+import { Search, ChevronRight, Zap, ShieldCheck, Star, MapPin } from "lucide-react";
 
 const CATEGORIES = [
   { id: "all", label: "✨ All Services" },
@@ -18,6 +18,12 @@ const CATEGORY_STYLE: Record<string, { bg: string; text: string; icon: string }>
   "personal care": { bg: "#FDF2F8", text: "#BE185D", icon: "💆" },
   "skilled trades": { bg: "#FFFBEB", text: "#B45309", icon: "⚒️" },
 };
+
+const TRUST_BADGES = [
+  { icon: ShieldCheck, title: "Verified Providers", sub: "Every provider is checked" },
+  { icon: Star, title: "Rated & Reviewed", sub: "Real customer ratings" },
+  { icon: MapPin, title: "Local to Zimbabwe", sub: "Built for the local market" },
+] as const;
 
 export default function ServicesPage() {
   const [search, setSearch] = useState("");
@@ -39,7 +45,7 @@ export default function ServicesPage() {
         <div style={{ position: "absolute", bottom: "-40px", left: "10%", width: "200px", height: "200px", background: "radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%)", borderRadius: "50%" }} />
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px", position: "relative", zIndex: 1 }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(99,102,241,0.2)", color: "#A5B4FC", padding: "6px 16px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "20px", border: "1px solid rgba(99,102,241,0.3)" }}>
-            <Zap size={13} /> Zimbabwe's #1 Service Marketplace
+            <Zap size={13} /> Zimbabwe's Service Marketplace
           </div>
           <h1 style={{ fontSize: "52px", fontWeight: 800, color: "#fff", margin: "0 0 16px", fontFamily: "Playfair Display, serif", lineHeight: 1.1 }}>
             Find Trusted Local<br />
@@ -59,11 +65,18 @@ export default function ServicesPage() {
               style={{ width: "100%", padding: "18px 20px 18px 52px", border: "none", borderRadius: "16px", fontSize: "16px", background: "rgba(255,255,255,0.95)", color: "#0F172A", outline: "none", boxSizing: "border-box", boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}
             />
           </div>
-          <div style={{ display: "flex", gap: "32px", marginTop: "40px", flexWrap: "wrap" }}>
-            {[["500+", "Verified Providers"], ["2,000+", "Happy Customers"], ["4.8★", "Average Rating"]].map(([val, label]) => (
-              <div key={label}>
-                <div style={{ fontSize: "22px", fontWeight: 800, color: "#fff" }}>{val}</div>
-                <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)" }}>{label}</div>
+
+          {/* Trust badges */}
+          <div style={{ display: "flex", gap: "28px", marginTop: "40px", flexWrap: "wrap" }}>
+            {TRUST_BADGES.map(({ icon: Icon, title, sub }) => (
+              <div key={title} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <div style={{ width: "40px", height: "40px", borderRadius: "12px", background: "rgba(99,102,241,0.2)", border: "1px solid rgba(99,102,241,0.3)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <Icon size={19} color="#A5B4FC" />
+                </div>
+                <div>
+                  <div style={{ fontSize: "15px", fontWeight: 700, color: "#fff", lineHeight: 1.3 }}>{title}</div>
+                  <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)" }}>{sub}</div>
+                </div>
               </div>
             ))}
           </div>
