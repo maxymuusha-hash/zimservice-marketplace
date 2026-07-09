@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { useLocation } from "wouter";
 import { Search, ChevronRight, Zap, ShieldCheck, Star, MapPin } from "lucide-react";
 
@@ -196,6 +197,8 @@ export default function ServicesPage() {
           </>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }
