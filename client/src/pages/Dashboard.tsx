@@ -2,6 +2,7 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -237,7 +238,9 @@ export default function Dashboard() {
     }
   };
 
-  const handleDeleteService = async (id: number) => {
+  const handleDeleteService = async (id: number, name: string) => {
+    const ok = window.confirm(`Delete "${name}"?\n\nThis will permanently remove the service and cannot be undone.`);
+    if (!ok) return;
     try {
       await deleteService.mutateAsync({ id });
       await utils.services.list.invalidate();
@@ -448,7 +451,7 @@ export default function Dashboard() {
                       <p style={{ fontWeight: 700, color: "#3B82F6", margin: 0 }}>${service.price}</p>
                       <p style={{ fontSize: "12px", color: "#94A3B8", margin: 0 }}>per {service.unit || "job"}</p>
                     </div>
-                    <button onClick={() => handleDeleteService(service.id)} style={{ padding: "8px", border: "1px solid #FECACA", borderRadius: "8px", background: "#FEF2F2", color: "#DC2626", cursor: "pointer", display: "flex", alignItems: "center" }}>
+                    <button onClick={() => handleDeleteService(service.id, service.name)} style={{ padding: "8px", border: "1px solid #FECACA", borderRadius: "8px", background: "#FEF2F2", color: "#DC2626", cursor: "pointer", display: "flex", alignItems: "center" }}>
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -458,6 +461,8 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }
