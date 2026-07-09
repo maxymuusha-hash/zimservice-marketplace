@@ -47,8 +47,11 @@ export default function Home() {
       `}</style>
 
       {/* Hero */}
-      <section style={{ background: "linear-gradient(135deg, #f0f7ff 0%, #ffffff 50%, #f5f0ff 100%)", padding: "60px 0" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
+     <section style={{ background: "linear-gradient(135deg, #DBEAFE 0%, #EDE9FE 45%, #FCE7F3 100%)", padding: "60px 0", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "-80px", right: "-60px", width: "400px", height: "400px", background: "radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%)", borderRadius: "50%" }} />
+        <div style={{ position: "absolute", bottom: "-60px", left: "5%", width: "300px", height: "300px", background: "radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%)", borderRadius: "50%" }} />
+        <div style={{ position: "absolute", top: "20%", left: "45%", width: "250px", height: "250px", background: "radial-gradient(circle, rgba(236,72,153,0.18) 0%, transparent 70%)", borderRadius: "50%" }} />
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px", position: "relative", zIndex: 1 }}>
           <div className="hero-grid">
             <div>
               <div style={{ display: "inline-block", background: "#EEF2FF", color: "#4F46E5", padding: "6px 16px", borderRadius: "999px", fontSize: "13px", fontWeight: 600, marginBottom: "20px" }}>
