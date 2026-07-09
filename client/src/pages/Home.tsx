@@ -23,7 +23,7 @@ export default function Home() {
   const [, setLocation] = useLocation();
 
   return (
-    <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#fff" }}>
+    <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#EFF6FF" }}>
       <Navbar />
 
       <style>{`
@@ -115,16 +115,16 @@ export default function Home() {
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
           <div style={{ textAlign: "center", marginBottom: "40px" }}>
             <h2 style={{ fontSize: "32px", fontWeight: 800, color: "#0F172A", marginBottom: "10px", fontFamily: "Playfair Display, serif" }}>Featured Service Categories</h2>
-            <p style={{ fontSize: "16px", color: "#64748B" }}>Find the perfect provider for any need</p>
+            <p style={{ fontSize: "16px", color: "#475569" }}>Find the perfect provider for any need</p>
           </div>
           <div className="cat-grid">
             {CATEGORIES.map(({ name, desc, icon: Icon, bg }) => (
               <button
                 key={name}
                 onClick={() => setLocation("/services")}
-                style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: "16px", padding: "24px 20px", textAlign: "left", cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}
-                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(0,0,0,0.1)"; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.04)"; }}
+                style={{ background: "#fff", border: "1px solid #BFDBFE", borderRadius: "16px", padding: "24px 20px", textAlign: "left", cursor: "pointer", boxShadow: "0 2px 12px rgba(37,99,235,0.08)" }}
+                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 32px rgba(37,99,235,0.18)"; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 12px rgba(37,99,235,0.08)"; }}
               >
                 <div style={{ width: "48px", height: "48px", background: bg, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "14px" }}>
                   <Icon size={24} color="#fff" />
@@ -142,7 +142,7 @@ export default function Home() {
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
           <div style={{ textAlign: "center", marginBottom: "40px" }}>
             <h2 style={{ fontSize: "32px", fontWeight: 800, color: "#0F172A", marginBottom: "10px", fontFamily: "Playfair Display, serif" }}>How It Works</h2>
-            <p style={{ fontSize: "16px", color: "#64748B" }}>Book a service in 3 simple steps</p>
+            <p style={{ fontSize: "16px", color: "#475569" }}>Book a service in 3 simple steps</p>
           </div>
           <div className="how-grid">
             {[
@@ -150,8 +150,8 @@ export default function Home() {
               { step: "2", title: "Book & Schedule", desc: "Pick your provider and choose a time that works for you.", color: "#6366F1" },
               { step: "3", title: "Pay & Review", desc: "Pay securely via Paynow and leave a review after the job.", color: "#8B5CF6" },
             ].map(({ step, title, desc, color }) => (
-              <div key={step} style={{ textAlign: "center", padding: "28px 24px", background: "#F8FAFC", borderRadius: "16px" }}>
-                <div style={{ width: "56px", height: "56px", background: color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: "22px", fontWeight: 800, color: "#fff" }}>{step}</div>
+              <div key={step} style={{ textAlign: "center", padding: "28px 24px", background: "#fff", borderRadius: "16px", boxShadow: "0 4px 20px rgba(37,99,235,0.12)", border: "1px solid rgba(191,219,254,0.6)" }}>
+                <div style={{ width: "56px", height: "56px", background: color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: "22px", fontWeight: 800, color: "#fff", boxShadow: `0 4px 14px ${color}55` }}>{step}</div>
                 <div style={{ fontSize: "18px", fontWeight: 700, color: "#0F172A", marginBottom: "8px" }}>{title}</div>
                 <div style={{ fontSize: "14px", color: "#64748B", lineHeight: 1.6 }}>{desc}</div>
               </div>
