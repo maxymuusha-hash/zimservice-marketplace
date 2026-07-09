@@ -168,7 +168,7 @@ export default function Home() {
               Find Services
             </button>
             <button onClick={() => isAuthenticated ? setLocation("/provider/onboarding") : (window.location.href = getLoginUrl())} style={{ background: "rgba(255,255,255,0.15)", color: "#fff", border: "2px solid rgba(255,255,255,0.5)", padding: "14px 28px", borderRadius: "12px", fontSize: "16px", fontWeight: 700, cursor: "pointer" }}>
-              Start Earning
+              List Your Services
             </button>
           </div>
         </div>
