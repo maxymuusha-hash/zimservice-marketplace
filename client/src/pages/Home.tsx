@@ -138,7 +138,7 @@ export default function Home() {
       </section>
 
       {/* How it works */}
-      <section style={{ background: "#fff", padding: "60px 0" }}>
+      <section style={{ background: "linear-gradient(180deg, #EFF6FF 0%, #BFDBFE 100%)", padding: "60px 0" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
           <div style={{ textAlign: "center", marginBottom: "40px" }}>
             <h2 style={{ fontSize: "32px", fontWeight: 800, color: "#0F172A", marginBottom: "10px", fontFamily: "Playfair Display, serif" }}>How It Works</h2>
