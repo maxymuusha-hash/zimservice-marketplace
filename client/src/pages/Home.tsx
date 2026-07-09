@@ -3,6 +3,7 @@ import { ArrowRight, Briefcase, Home as HomeIcon, Heart, Wrench, Star, CheckCirc
 import { useLocation } from "wouter";
 import { getLoginUrl } from "@/const";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const CATEGORIES = [
   { name: "Household Chores", desc: "Cleaning, laundry, organizing", icon: HomeIcon, bg: "#3B82F6" },
@@ -17,28 +18,9 @@ const TRUST_BADGES = [
   { icon: MapPin, title: "Local to Zimbabwe", sub: "Built for the local market", color: "#3B82F6" },
 ];
 
-// TODO: replace with your actual SmartServ Facebook page URL
-const FACEBOOK_URL = "https://www.facebook.com/YOUR_PAGE_HERE";
-
-type FooterLink = { label: string; href: string; external?: boolean };
-
-const FOOTER_COLUMNS: { title: string; links: FooterLink[] }[] = [
-  { title: "About", links: [{ label: "About Us", href: "#" }, { label: "Blog", href: "#" }, { label: "Careers", href: "#" }] },
-  { title: "Support", links: [{ label: "Help Center", href: "#" }, { label: "Contact Us", href: "#" }, { label: "FAQ", href: "#" }] },
-  { title: "Legal", links: [{ label: "Privacy Policy", href: "#" }, { label: "Terms of Service", href: "#" }, { label: "Disclaimer", href: "/disclaimer" }] },
-  { title: "Connect", links: [{ label: "Facebook", href: FACEBOOK_URL, external: true }] },
-];
-
 export default function Home() {
   const { isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
-
-  const handleFooterClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (href.startsWith("/")) {
-      e.preventDefault();
-      setLocation(href);
-    }
-  };
 
   return (
     <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#fff" }}>
@@ -49,18 +31,15 @@ export default function Home() {
         .hero-title { font-size: 52px; }
         .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
         .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
-        .footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
         .hero-trust { display: flex; flex-direction: column; gap: 16px; }
         .cta-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
         .badges-row { display: flex; gap: 28px; flex-wrap: wrap; }
-        .footer-link { display: block; font-size: 14px; color: #94A3B8; margin-bottom: 8px; text-decoration: none; }
         @media (max-width: 768px) {
           .hero-grid { grid-template-columns: 1fr; gap: 32px; }
           .hero-title { font-size: 32px !important; }
           .hero-trust { display: none; }
           .cat-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
           .how-grid { grid-template-columns: 1fr; gap: 16px; }
-          .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
           .badges-row { gap: 16px; }
           .cta-buttons { flex-direction: column; }
           .cta-buttons button { width: 100%; justify-content: center; }
@@ -195,35 +174,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer style={{ background: "#0F172A", padding: "48px 0 24px" }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
-          <div className="footer-grid" style={{ marginBottom: "40px" }}>
-            {FOOTER_COLUMNS.map(({ title, links }) => (
-              <div key={title}>
-                <div style={{ fontSize: "13px", fontWeight: 700, color: "#fff", marginBottom: "14px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{title}</div>
-                {links.map((link) => {
-                  if (link.external) {
-                    return (
-                      <a key={link.label} className="footer-link" href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
-                    );
-                  }
-                  return (
-                    <a key={link.label} className="footer-link" href={link.href} onClick={(e) => handleFooterClick(e, link.href)}>{link.label}</a>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-          <div style={{ borderTop: "1px solid #1E293B", paddingTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <div style={{ width: "28px", height: "28px", background: "linear-gradient(135deg, #3B82F6, #6366F1)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 800, fontSize: "12px" }}>SS</div>
-              <span style={{ color: "#fff", fontWeight: 700, fontSize: "15px" }}>SmartServ</span>
-            </div>
-            <span style={{ fontSize: "13px", color: "#64748B" }}>© 2026 SmartServ. All rights reserved.</span>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
