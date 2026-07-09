@@ -2,7 +2,7 @@ import { useLocation } from "wouter";
 import { Facebook } from "lucide-react";
 
 // TODO: replace with your actual SmartServ Facebook page URL
-const FACEBOOK_URL = "https://www.facebook.com/YOUR_PAGE_HERE";
+const FACEBOOK_URL = "https://www.facebook.com/PrimeWaveDigital";
 
 export default function Footer() {
   const [, setLocation] = useLocation();
