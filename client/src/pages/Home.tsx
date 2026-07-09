@@ -20,6 +20,15 @@ const TRUST_BADGES = [
 // TODO: replace with your actual SmartServ Facebook page URL
 const FACEBOOK_URL = "https://www.facebook.com/YOUR_PAGE_HERE";
 
+type FooterLink = { label: string; href: string; external?: boolean };
+
+const FOOTER_COLUMNS: { title: string; links: FooterLink[] }[] = [
+  { title: "About", links: [{ label: "About Us", href: "#" }, { label: "Blog", href: "#" }, { label: "Careers", href: "#" }] },
+  { title: "Support", links: [{ label: "Help Center", href: "#" }, { label: "Contact Us", href: "#" }, { label: "FAQ", href: "#" }] },
+  { title: "Legal", links: [{ label: "Privacy Policy", href: "#" }, { label: "Terms of Service", href: "#" }, { label: "Disclaimer", href: "/disclaimer" }] },
+  { title: "Connect", links: [{ label: "Facebook", href: FACEBOOK_URL, external: true }] },
+];
+
 export default function Home() {
   const { isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
@@ -182,20 +191,21 @@ export default function Home() {
       <footer style={{ background: "#0F172A", padding: "48px 0 24px" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 20px" }}>
           <div className="footer-grid" style={{ marginBottom: "40px" }}>
-            {[
-              { title: "About", links: [{ label: "About Us", href: "#" }, { label: "Blog", href: "#" }, { label: "Careers", href: "#" }] },
-              { title: "Support", links: [{ label: "Help Center", href: "#" }, { label: "Contact Us", href: "#" }, { label: "FAQ", href: "#" }] },
-              { title: "Legal", links: [{ label: "Privacy Policy", href: "#" }, { label: "Terms of Service", href: "#" }, { label: "Disclaimer", href: "/disclaimer" }] },
-              { title: "Connect", links: [{ label: "Facebook", href: FACEBOOK_URL, external: true }] },
-            ].map(({ title, links }) => (
+            {FOOTER_COLUMNS.map(({ title, links }) => (
               <div key={title}>
                 <div style={{ fontSize: "13px", fontWeight: 700, color: "#fff", marginBottom: "14px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{title}</div>
                 {links.map((link) => (
                   
                     key={link.label}
                     href={link.href}
-                    {...(link as any).external ? { target: "_blank", rel: "noopener noreferrer" } : {}}
-                    onClick={link.href.startsWith("/") ? (e) => { e.preventDefault(); setLocation(link.href); } : undefined}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
+                    onClick={(e) => {
+                      if (link.href.startsWith("/")) {
+                        e.preventDefault();
+                        setLocation(link.href);
+                      }
+                    }}
                     style={{ display: "block", fontSize: "14px", color: "#94A3B8", marginBottom: "8px", textDecoration: "none" }}
                   >
                     {link.label}
