@@ -33,6 +33,13 @@ export default function Home() {
   const { isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
 
+  const handleFooterClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("/")) {
+      e.preventDefault();
+      setLocation(href);
+    }
+  };
+
   return (
     <div style={{ minHeight: "100vh", fontFamily: "Inter, sans-serif", background: "#fff" }}>
       <Navbar />
@@ -46,6 +53,7 @@ export default function Home() {
         .hero-trust { display: flex; flex-direction: column; gap: 16px; }
         .cta-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
         .badges-row { display: flex; gap: 28px; flex-wrap: wrap; }
+        .footer-link { display: block; font-size: 14px; color: #94A3B8; margin-bottom: 8px; text-decoration: none; }
         @media (max-width: 768px) {
           .hero-grid { grid-template-columns: 1fr; gap: 32px; }
           .hero-title { font-size: 32px !important; }
@@ -194,23 +202,16 @@ export default function Home() {
             {FOOTER_COLUMNS.map(({ title, links }) => (
               <div key={title}>
                 <div style={{ fontSize: "13px", fontWeight: 700, color: "#fff", marginBottom: "14px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{title}</div>
-                {links.map((link) => (
-                  
-                    key={link.label}
-                    href={link.href}
-                    target={link.external ? "_blank" : undefined}
-                    rel={link.external ? "noopener noreferrer" : undefined}
-                    onClick={(e) => {
-                      if (link.href.startsWith("/")) {
-                        e.preventDefault();
-                        setLocation(link.href);
-                      }
-                    }}
-                    style={{ display: "block", fontSize: "14px", color: "#94A3B8", marginBottom: "8px", textDecoration: "none" }}
-                  >
-                    {link.label}
-                  </a>
-                ))}
+                {links.map((link) => {
+                  if (link.external) {
+                    return (
+                      <a key={link.label} className="footer-link" href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+                    );
+                  }
+                  return (
+                    <a key={link.label} className="footer-link" href={link.href} onClick={(e) => handleFooterClick(e, link.href)}>{link.label}</a>
+                  );
+                })}
               </div>
             ))}
           </div>
