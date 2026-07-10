@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
-import { CheckCircle, Zap, Shield, Star, Loader } from "lucide-react";
+import { CheckCircle, Zap, Shield, Star, Loader, Copy } from "lucide-react";
 
 export default function Subscribe() {
   const { user, isAuthenticated, loading } = useAuth({ redirectOnUnauthenticated: false });
@@ -12,7 +13,8 @@ export default function Subscribe() {
   const [phone, setPhone] = useState("");
   const [method, setMethod] = useState<"ecocash" | "innbucks">("ecocash");
   const [pollUrl, setPollUrl] = useState<string | null>(null);
-  const [polling, setPolling] = useState(false);
+  const [authCode, setAuthCode] = useState<string | null>(null);
+  const [instructions, setInstructions] = useState<string | null>(null);
   const [paid, setPaid] = useState(false);
 
   const initiate = trpc.subscription.initiate.useMutation();
@@ -23,13 +25,11 @@ export default function Subscribe() {
 
   useEffect(() => {
     if (!pollUrl || paid) return;
-    setPolling(true);
     const interval = setInterval(async () => {
       try {
         const result = await poll.mutateAsync({ pollUrl });
         if (result.paid) {
           setPaid(true);
-          setPolling(false);
           clearInterval(interval);
           toast.success("Payment confirmed! Your subscription is active.");
           setTimeout(() => setLocation("/dashboard"), 2000);
@@ -81,9 +81,22 @@ export default function Subscribe() {
     try {
       const result = await initiate.mutateAsync({ phone, method });
       setPollUrl(result.pollUrl);
-      toast.success(`Payment request sent to your ${method === "ecocash" ? "EcoCash" : "InnBucks"} number. Please approve it on your phone.`);
+      setAuthCode((result as any).authCode || null);
+      setInstructions((result as any).instructions || null);
+      if (method === "ecocash") {
+        toast.success("Payment request sent to your EcoCash number. Please approve it on your phone.");
+      } else {
+        toast.success("Payment created! Follow the InnBucks instructions below.");
+      }
     } catch (e: any) {
       toast.error(e.message || "Payment initiation failed");
+    }
+  };
+
+  const copyCode = () => {
+    if (authCode) {
+      navigator.clipboard.writeText(authCode);
+      toast.success("Code copied!");
     }
   };
 
@@ -108,7 +121,7 @@ export default function Subscribe() {
             {[
               { icon: CheckCircle, text: "Unlimited service listings", color: "#34D399" },
               { icon: Star, text: "Verified provider badge", color: "#FBBF24" },
-              { icon: Shield, text: "Secure Paynow payments", color: "#60A5FA" },
+              { icon: Shield, text: "Cancel anytime", color: "#60A5FA" },
             ].map(({ icon: Icon, text, color }) => (
               <div key={text} style={{ display: "flex", alignItems: "center", gap: "8px", background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)", padding: "10px 16px", borderRadius: "10px" }}>
                 <Icon size={16} color={color} />
@@ -152,6 +165,11 @@ export default function Subscribe() {
                 onChange={(e) => setPhone(e.target.value)}
                 style={{ width: "100%", padding: "14px 16px", border: "2px solid #E2E8F0", borderRadius: "12px", fontSize: "15px", outline: "none", boxSizing: "border-box", fontFamily: "Inter, sans-serif", background: "#FAFAFA", color: "#0F172A" }}
               />
+              {method === "innbucks" && (
+                <p style={{ fontSize: "12px", color: "#64748B", marginTop: "8px" }}>
+                  After clicking Pay, you'll receive a payment code to complete the payment in your InnBucks app.
+                </p>
+              )}
             </div>
 
             <button
@@ -178,12 +196,37 @@ export default function Subscribe() {
               <Loader size={32} color="#6366F1" style={{ animation: "spin 1s linear infinite" }} />
             </div>
             <h2 style={{ fontSize: "22px", fontWeight: 800, color: "#0F172A", marginBottom: "8px", fontFamily: "Playfair Display, serif" }}>Waiting for Payment</h2>
-            <p style={{ color: "#64748B", marginBottom: "8px" }}>Please approve the payment prompt on your phone.</p>
-            <p style={{ fontSize: "13px", color: "#94A3B8" }}>Checking automatically every 5 seconds...</p>
+
+            {method === "innbucks" && authCode ? (
+              <>
+                <p style={{ color: "#64748B", marginBottom: "16px" }}>Open your <strong>InnBucks app</strong> and pay with this code:</p>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginBottom: "16px" }}>
+                  <span style={{ fontSize: "32px", fontWeight: 800, letterSpacing: "6px", color: "#0F172A", background: "#EEF2FF", padding: "12px 20px", borderRadius: "12px", border: "2px dashed #C7D2FE" }}>
+                    {authCode}
+                  </span>
+                  <button onClick={copyCode} style={{ padding: "10px", border: "1px solid #E2E8F0", borderRadius: "10px", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center" }} aria-label="Copy code">
+                    <Copy size={18} color="#64748B" />
+                  </button>
+                </div>
+                <p style={{ fontSize: "13px", color: "#94A3B8" }}>This screen will update automatically once your payment is received.</p>
+              </>
+            ) : method === "innbucks" && instructions ? (
+              <>
+                <p style={{ color: "#64748B", marginBottom: "12px" }}>{instructions}</p>
+                <p style={{ fontSize: "13px", color: "#94A3B8" }}>This screen will update automatically once your payment is received.</p>
+              </>
+            ) : (
+              <>
+                <p style={{ color: "#64748B", marginBottom: "8px" }}>Please approve the payment prompt on your phone.</p>
+                <p style={{ fontSize: "13px", color: "#94A3B8" }}>Checking automatically every 5 seconds...</p>
+              </>
+            )}
             <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
           </div>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }
