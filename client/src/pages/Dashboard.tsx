@@ -382,6 +382,14 @@ export default function Dashboard() {
                       <p style={{ fontWeight: 600, color: "#0F172A", margin: "0 0 4px" }}>{job.serviceName}</p>
                       <p style={{ fontSize: "13px", color: "#64748B", margin: "0 0 6px" }}>
                         {isProvider ? `Customer: ${job.customerName}` : `Provider: ${job.providerName}`}
+                        {!isProvider && job.providerPhone && (
+                          <>
+                            {" · "}
+                            <a href={`tel:${job.providerPhone}`} style={{ color: "#3B82F6", fontWeight: 600, textDecoration: "none" }}>
+                              📞 {job.providerPhone}
+                            </a>
+                          </>
+                        )}
                       </p>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "#94A3B8" }}>
                         <Calendar size={12} />
