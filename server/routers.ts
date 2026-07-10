@@ -75,10 +75,17 @@ export const appRouter = router({
           .where(and(eq(users.id, input.id), eq(users.isProvider, true)))
           .limit(1);
         if (!provider) return null;
-        const providerServices = await db
-          .select()
-          .from(services)
-          .where(eq(services.providerId, input.id));
+        const now = new Date();
+        const hasActiveSub =
+          provider.subscriptionStatus === "active" &&
+          provider.subscriptionExpiry &&
+          new Date(provider.subscriptionExpiry) > now;
+        const providerServices = hasActiveSub
+          ? await db
+              .select()
+              .from(services)
+              .where(eq(services.providerId, input.id))
+          : [];
         const providerReviews = await db
           .select()
           .from(reviews)
@@ -116,11 +123,20 @@ export const appRouter = router({
             providerName: users.name,
             providerBio: users.bio,
             createdAt: services.createdAt,
+            providerSubStatus: users.subscriptionStatus,
+            providerSubExpiry: users.subscriptionExpiry,
           })
           .from(services)
           .innerJoin(users, eq(services.providerId, users.id));
 
+        const now = new Date();
         return allServices.filter((s) => {
+          if (
+            s.providerSubStatus !== "active" ||
+            !s.providerSubExpiry ||
+            new Date(s.providerSubExpiry) <= now
+          )
+            return false;
           if (input.category && s.category !== input.category) return false;
           if (input.minPrice && s.price < input.minPrice) return false;
           if (input.maxPrice && s.price > input.maxPrice) return false;
@@ -133,6 +149,16 @@ export const appRouter = router({
           return true;
         });
       }),
+
+    mine: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+      return db
+        .select()
+        .from(services)
+        .where(eq(services.providerId, ctx.user.id))
+        .orderBy(desc(services.createdAt));
+    }),
 
     create: protectedProcedure
       .input(
