@@ -185,10 +185,9 @@ export default function Dashboard() {
   const { data: providerJobs = [], refetch: refetchJobs } = trpc.bookings.providerJobs.useQuery(undefined, {
     enabled: isAuthenticated && !!user?.isProvider,
   });
-  const { data: myServices = [] } = trpc.services.list.useQuery(
-    { search: undefined },
-    { enabled: isAuthenticated && !!user?.isProvider }
-  );
+ const { data: myServices = [] } = trpc.services.mine.useQuery(undefined, {
+    enabled: isAuthenticated && !!user?.isProvider,
+  });
   const { data: subStatus } = trpc.subscription.status.useQuery(undefined, {
     enabled: isAuthenticated && !!user?.isProvider,
   });
