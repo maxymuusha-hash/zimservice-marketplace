@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/supabase";
 import { useLocation } from "wouter";
-import { LayoutDashboard, LogOut, Wrench, Menu, X } from "lucide-react";
+import { LayoutDashboard, LogOut, Wrench, Menu, X, ShieldCheck } from "lucide-react";
+
+const ADMIN_EMAIL = "maxymuusha@gmail.com";
 
 export default function Navbar() {
   const [user, setUser] = useState<any>(null);
@@ -17,6 +19,8 @@ export default function Navbar() {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  const isAdmin = user?.email === ADMIN_EMAIL;
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -51,6 +55,11 @@ export default function Navbar() {
               <button onClick={() => navigate("/provider/onboarding")} style={{ display: "flex", alignItems: "center", gap: "6px", background: "none", border: "none", cursor: "pointer", fontSize: "14px", color: "#64748B", padding: "8px 12px", borderRadius: "8px", fontWeight: 500 }}>
                 <Wrench size={15} /> Become Provider
               </button>
+              {isAdmin && (
+                <button onClick={() => navigate("/admin")} style={{ display: "flex", alignItems: "center", gap: "6px", background: "#EEF2FF", color: "#4F46E5", border: "1px solid #C7D2FE", padding: "8px 14px", borderRadius: "8px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>
+                  <ShieldCheck size={15} /> Admin
+                </button>
+              )}
               <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: "6px", background: "#FEF2F2", color: "#EF4444", border: "1px solid #FECACA", padding: "8px 14px", borderRadius: "8px", fontSize: "14px", fontWeight: 600, cursor: "pointer" }}>
                 <LogOut size={15} /> Sign Out
               </button>
@@ -86,6 +95,11 @@ export default function Navbar() {
               <button onClick={() => navigate("/provider/onboarding")} style={{ display: "flex", alignItems: "center", gap: "8px", background: "none", border: "none", cursor: "pointer", fontSize: "15px", color: "#0F172A", padding: "12px 0", textAlign: "left", fontWeight: 500, borderBottom: "1px solid #F1F5F9" }}>
                 <Wrench size={16} /> Become a Provider
               </button>
+              {isAdmin && (
+                <button onClick={() => navigate("/admin")} style={{ display: "flex", alignItems: "center", gap: "8px", background: "none", border: "none", cursor: "pointer", fontSize: "15px", color: "#4F46E5", padding: "12px 0", textAlign: "left", fontWeight: 600, borderBottom: "1px solid #F1F5F9" }}>
+                  <ShieldCheck size={16} /> Admin
+                </button>
+              )}
               <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: "8px", background: "#FEF2F2", color: "#EF4444", border: "1px solid #FECACA", padding: "12px 16px", borderRadius: "10px", fontSize: "15px", fontWeight: 600, cursor: "pointer", marginTop: "8px" }}>
                 <LogOut size={16} /> Sign Out
               </button>
