@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/supabase";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
-import { ArrowRight, Shield, Star, Users } from "lucide-react";
+import { ArrowRight, Shield, Star, MapPin } from "lucide-react";
 
 type Mode = "signin" | "signup" | "forgot" | "reset";
 
@@ -109,7 +109,7 @@ export default function Auth() {
             {[
               { icon: Shield, text: "Verified & background-checked providers", color: "#34D399" },
               { icon: Star, text: "Rated & reviewed by real customers", color: "#FBBF24" },
-              { icon: Users, text: "2,000+ happy customers across Zimbabwe", color: "#60A5FA" },
+              { icon: MapPin, text: "Local to Zimbabwe — built for the local market", color: "#60A5FA" },
             ].map(({ icon: Icon, text, color }) => (
               <div key={text} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                 <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -135,7 +135,7 @@ export default function Auth() {
           {mode === "signin" ? "Welcome back" : mode === "signup" ? "Create account" : mode === "forgot" ? "Reset password" : "Set new password"}
         </h2>
         <p style={{ fontSize: "14px", color: "#64748B", margin: "0 0 32px" }}>
-          {mode === "signin" ? "Sign in to your SmartServ account" : mode === "signup" ? "Join thousands of Zimbabweans on SmartServ" : mode === "forgot" ? "We'll send you a reset link" : "Enter your new password below"}
+          {mode === "signin" ? "Sign in to your SmartServ account" : mode === "signup" ? "Create your free SmartServ account" : mode === "forgot" ? "We'll send you a reset link" : "Enter your new password below"}
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
