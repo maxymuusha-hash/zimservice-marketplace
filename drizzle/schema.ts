@@ -12,6 +12,8 @@ export const users = pgTable("users", {
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
   isProvider: boolean("isProvider").default(false),
   bio: text("bio"),
+  phone: varchar("phone", { length: 20 }),
+  location: text("location"),
   subscriptionStatus: text("subscriptionStatus").default("none"),
   subscriptionExpiry: timestamp("subscriptionExpiry"),
   lastPaymentRef: text("lastPaymentRef"),
