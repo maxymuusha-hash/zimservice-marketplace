@@ -42,7 +42,7 @@ export const appRouter = router({
         if (!db) throw new Error("Database unavailable");
         await db
           .update(users)
-          .set({ isProvider: true, bio: input.bio, role: "provider" })
+          .set({ isProvider: true, bio: input.bio, role: "provider", phone: input.phone || null, location: input.location || null })
           .where(eq(users.id, ctx.user.id));
         return { success: true };
       }),
