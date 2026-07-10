@@ -23,14 +23,35 @@ export async function initiateSubscriptionPayment(
     ? await paynow.sendMobile(payment, phone, "ecocash")
     : await paynow.sendMobile(payment, phone, "innbucks");
 
+  // Log the raw response so we can see exactly what Paynow returns (visible in Render logs)
+  console.log("Paynow sendMobile response (" + method + "):", JSON.stringify(response, null, 2));
+
   if (!response.success) {
     throw new Error(response.error || "Payment initiation failed");
   }
+
+  // InnBucks payments return an authorization code the customer uses to
+  // complete payment in the InnBucks app. Field name varies by SDK version,
+  // so check all known locations.
+  const authCode =
+    response.innbucks_info?.[0]?.authorizationcode ||
+    response.innbucksInfo?.[0]?.authorizationcode ||
+    response.authorizationcode ||
+    response.authorizationCode ||
+    null;
+
+  const deepLink =
+    response.innbucks_info?.[0]?.deep_link_url ||
+    response.innbucksInfo?.[0]?.deep_link_url ||
+    null;
 
   return {
     pollUrl: response.pollUrl,
     redirectUrl: response.redirectUrl || null,
     instructions: response.instructions || null,
+    authCode,
+    deepLink,
+    method,
   };
 }
 
