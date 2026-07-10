@@ -148,7 +148,7 @@ export default function Home() {
             {[
               { step: "1", title: "Find & Browse", desc: "Search by category, location, and price. Read reviews and ratings.", color: "#3B82F6" },
               { step: "2", title: "Book & Schedule", desc: "Pick your provider and choose a time that works for you.", color: "#6366F1" },
-              { step: "3", title: "Pay & Review", desc: "Pay securely online and leave a review after the job.", color: "#8B5CF6" },
+              { step: "3", title: "Complete & Review", desc: "Pay the provider directly and leave a review after the job.", color: "#8B5CF6" },
             ].map(({ step, title, desc, color }) => (
               <div key={step} style={{ textAlign: "center", padding: "28px 24px", background: "#fff", borderRadius: "16px", boxShadow: "0 4px 20px rgba(37,99,235,0.12)", border: "1px solid rgba(191,219,254,0.6)" }}>
                 <div style={{ width: "56px", height: "56px", background: color, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: "22px", fontWeight: 800, color: "#fff", boxShadow: `0 4px 14px ${color}55` }}>{step}</div>
