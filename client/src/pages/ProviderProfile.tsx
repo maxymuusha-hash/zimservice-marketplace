@@ -88,7 +88,7 @@ function BookingModal({
           </div>
         </div>
         <p style={{ fontSize: "12px", color: "#94A3B8", marginBottom: "20px" }}>
-          💳 Payment via Paynow will be collected at time of service completion.
+          💵 Payment is arranged directly between you and the provider after the service.
         </p>
         <div style={{ display: "flex", gap: "12px" }}>
           <button onClick={onClose} style={{ flex: 1, padding: "12px", border: "1px solid #E2E8F0", borderRadius: "10px", background: "#fff", cursor: "pointer", fontWeight: 600, color: "#64748B", fontSize: "15px" }}>
