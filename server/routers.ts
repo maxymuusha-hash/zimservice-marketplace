@@ -252,6 +252,21 @@ export const appRouter = router({
           createdAt: bookings.createdAt,
           serviceName: services.name,
           serviceCategory: services.category,
+          providerName: users.name,     ← this is the line from Step 3
+          providerId: bookings.providerId,
+          serviceId: bookings.serviceId,
+        })
+      const db = await getDb();
+      if (!db) return [];
+      return db
+        .select({
+          id: bookings.id,
+          status: bookings.status,
+          bookingDate: bookings.bookingDate,
+          totalPrice: bookings.totalPrice,
+          createdAt: bookings.createdAt,
+          serviceName: services.name,
+          serviceCategory: services.category,
           providerName: users.name,
           providerId: bookings.providerId,
           serviceId: bookings.serviceId,
