@@ -15,6 +15,8 @@ import {
 import { eq, and, desc } from "drizzle-orm";
 import { z } from "zod";
 
+const ADMIN_EMAIL = "maxymuusha@gmail.com";
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -360,6 +362,51 @@ export const appRouter = router({
           pendingJobs: myBookings.filter((b) => b.status === "pending").length,
         };
       }
+    }),
+  }),
+
+  admin: router({
+    stats: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.email !== ADMIN_EMAIL) throw new Error("Not authorized");
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+      const allUsers = await db.select().from(users);
+      const now = new Date();
+      const providers = allUsers.filter((u) => u.isProvider);
+      const activeSubs = allUsers.filter(
+        (u) =>
+          u.subscriptionStatus === "active" &&
+          u.subscriptionExpiry &&
+          new Date(u.subscriptionExpiry) > now
+      );
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const newThisWeek = allUsers.filter(
+        (u) => u.createdAt && new Date(u.createdAt) > sevenDaysAgo
+      );
+      return {
+        totalUsers: allUsers.length,
+        totalProviders: providers.length,
+        activeSubscriptions: activeSubs.length,
+        newThisWeek: newThisWeek.length,
+      };
+    }),
+
+    recentUsers: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.email !== ADMIN_EMAIL) throw new Error("Not authorized");
+      const db = await getDb();
+      if (!db) return [];
+      return db
+        .select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          isProvider: users.isProvider,
+          subscriptionStatus: users.subscriptionStatus,
+          createdAt: users.createdAt,
+        })
+        .from(users)
+        .orderBy(desc(users.createdAt))
+        .limit(30);
     }),
   }),
 
